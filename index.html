@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHIS2 Metadata Export</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f4f8; font-family: 'Oswald', Arial, sans-serif; color: #000; font-weight: 500; min-height: 100vh; }
+
+        /* LOGIN */
+        .login-screen { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; background: linear-gradient(135deg, #004080 0%, #0066cc 100%); }
+        .login-card { background: #fff; border-radius: 12px; padding: 40px; max-width: 440px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.2); border: 4px double #004080; }
+        .logo-container { display: flex; justify-content: center; margin-bottom: 20px; }
+        .logo-box { background: #f8f9fa; border-radius: 8px; padding: 10px; border: 2px solid #004080; display: flex; align-items: center; justify-content: center; }
+        .logo-box img { width: 90px; height: auto; border-radius: 6px; }
+        .login-header { text-align: center; margin-bottom: 28px; }
+        .login-header h1 { color: #004080; font-size: 22px; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; }
+        .login-header p { color: #666; font-size: 13px; }
+        .form-group { margin-bottom: 18px; }
+        .form-label { display: block; color: #004080; font-size: 13px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-input { width: 100%; padding: 11px 14px; border: 2px solid #004080; border-radius: 6px; font-size: 13px; font-family: 'Oswald', Arial, sans-serif; font-weight: 500; color: #000; background: #fff; }
+        .readonly-input { background: #e9ecef !important; cursor: not-allowed; }
+        .form-input:focus { outline: none; border-color: #0056b3; box-shadow: 0 0 0 3px rgba(0,64,128,0.1); }
+        .btn-primary { width: 100%; padding: 13px; background: #004080; color: #fff; border: 2px solid #004080; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
+        .btn-primary:hover { background: #0056b3; }
+        .btn-primary:disabled { background: #6c757d; border-color: #6c757d; cursor: wait; }
+
+        /* MAIN */
+        .main-content { display: none; padding: 20px; }
+        .main-content.active { display: block; }
+        .page-container { max-width: 1000px; margin: 0 auto; }
+
+        .page-header { background: #004080; color: #fff; padding: 25px 30px; text-align: center; border-radius: 8px 8px 0 0; margin-bottom: 0; }
+        .page-header .logo-row { display: flex; justify-content: center; margin-bottom: 12px; }
+        .page-header .logo-box { background: #fff; border: none; }
+        .page-header h3 { font-size: 13px; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
+        .page-header .tagline { font-size: 10px; font-style: italic; opacity: 0.9; }
+        .page-header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; margin: 14px 0 6px; }
+        .page-header .subtitle { font-size: 13px; opacity: 0.9; }
+
+        .content-card { border: 4px double #004080; border-top: none; border-radius: 0 0 12px 12px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .content-inner { padding: 30px; }
+
+        .section-header { background: #004080; color: #fff; padding: 13px 18px; border-radius: 6px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .section-icon { background: #fff; color: #004080; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+        .section-title { font-size: 15px; font-weight: 700; letter-spacing: 0.5px; }
+
+        /* STATUS BOX */
+        .status-box { background: #f8f9fa; border: 2px solid #004080; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .status-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+        .stat-card { background: #fff; border: 2px solid #004080; border-radius: 6px; padding: 14px 20px; flex: 1; min-width: 120px; text-align: center; }
+        .stat-number { font-size: 28px; font-weight: 700; color: #004080; line-height: 1; }
+        .stat-label { font-size: 11px; color: #666; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* BUTTONS */
+        .btn-gold { padding: 13px 28px; background: #ffc107; color: #000; border: 2px solid #ffc107; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
+        .btn-gold:hover { background: #e0a800; border-color: #e0a800; }
+        .btn-gold:disabled { background: #e9ecef; color: #666; border-color: #ccc; cursor: wait; }
+        .btn-secondary { padding: 13px 24px; background: #fff; color: #004080; border: 2px solid #004080; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
+        .btn-secondary:hover { background: #004080; color: #fff; }
+        .btn-secondary:disabled { opacity: 0.6; cursor: wait; }
+        .btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+
+        /* PROGRESS */
+        .progress-wrap { margin: 18px 0; }
+        .progress-bar { height: 24px; background: #e9ecef; border-radius: 6px; overflow: hidden; border: 2px solid #004080; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #004080, #0066cc); transition: width 0.3s; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 700; min-width: 36px; }
+        .log-box { margin-top: 14px; background: #1a1a2e; border-radius: 6px; padding: 14px; max-height: 180px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 11px; }
+        .log-line { padding: 3px 0; border-bottom: 1px solid #2a2a3e; }
+        .log-line.info { color: #17a2b8; }
+        .log-line.success { color: #28a745; }
+        .log-line.error { color: #dc3545; }
+        .log-line.warning { color: #ffc107; }
+
+        /* PREVIEW TABLE */
+        .preview-wrap { overflow-x: auto; border: 2px solid #004080; border-radius: 6px; margin-top: 16px; max-height: 320px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        thead th { background: #004080; color: #fff; padding: 10px 14px; text-align: left; white-space: nowrap; position: sticky; top: 0; }
+        tbody tr:nth-child(even) { background: #f0f4f8; }
+        tbody tr:hover { background: #d4e8ff; }
+        tbody td { padding: 8px 14px; border-bottom: 1px solid #ddd; white-space: nowrap; }
+        .uid-cell { font-family: 'Courier New', monospace; font-size: 11px; color: #0056b3; }
+
+        /* NOTIFICATION */
+        .notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 14px 28px; border-radius: 8px; font-weight: 600; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-size: 13px; }
+        .notification.success { background: #d4edda; color: #155724; border: 2px solid #28a745; display: block; }
+        .notification.error { background: #f8d7da; color: #721c24; border: 2px solid #dc3545; display: block; }
+        .notification.info { background: #e7f3ff; color: #004080; border: 2px solid #004080; display: block; }
+
+        .page-footer { background: #004080; color: #fff; padding: 18px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px; line-height: 1.8; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        ::-webkit-scrollbar { width: 7px; height: 7px; }
+        ::-webkit-scrollbar-thumb { background: #004080; border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: #f8f9fa; }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+    <div class="login-card">
+        <div class="logo-container">
+            <div class="logo-box">
+                <img src="https://github.com/mohamedsillahkanu/gdp-dashboard-2/raw/6c7463b0d5c3be150aafae695a4bcbbd8aeb1499/ICF-SL.jpg" alt="ICF-SL">
+            </div>
+        </div>
+        <div class="login-header">
+            <h1>DHIS2 METADATA EXPORT</h1>
+            <p>Data Elements · Datasets · UIDs</p>
+        </div>
+        <div class="form-group">
+            <label class="form-label">DHIS2 Instance URL</label>
+            <input type="url" class="form-input readonly-input" id="instanceUrl" value="https://sl.dhis2.org/hmis23" readonly>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-input readonly-input" id="username" value="musa-sillahkanu" readonly>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input readonly-input" id="password" value="Navigator/2024!" readonly>
+        </div>
+        <button class="btn-primary" id="loginBtn" onclick="doLogin()">Connect to DHIS2</button>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-content" id="mainContent">
+    <div class="page-container">
+        <div class="page-header">
+            <div class="logo-row">
+                <div class="logo-box">
+                    <img src="https://github.com/mohamedsillahkanu/gdp-dashboard-2/raw/6c7463b0d5c3be150aafae695a4bcbbd8aeb1499/ICF-SL.jpg" alt="ICF-SL" style="width:85px;">
+                </div>
+            </div>
+            <h3>Informatics Consultancy Firm-Sierra Leone (ICF-SL)</h3>
+            <p class="tagline">Driving Data-Driven Solutions for Health and Development</p>
+            <h1>DHIS2 METADATA EXPORT TOOL</h1>
+            <p class="subtitle">Export Data Elements and Datasets with UIDs to Excel or CSV</p>
+        </div>
+
+        <div class="content-card">
+            <div class="content-inner">
+
+                <div class="section-header">
+                    <span class="section-icon">1</span>
+                    <span class="section-title">FETCH METADATA</span>
+                </div>
+
+                <div class="status-box">
+                    <div class="status-row">
+                        <div class="stat-card">
+                            <div class="stat-number" id="statDatasets">0</div>
+                            <div class="stat-label">Datasets</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="statElements">0</div>
+                            <div class="stat-label">Data Elements</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="statRows">0</div>
+                            <div class="stat-label">Export Rows</div>
+                        </div>
+                    </div>
+
+                    <div class="btn-row" style="margin-top: 0; justify-content: flex-start;">
+                        <button class="btn-secondary" id="fetchBtn" onclick="fetchMetadata()">Load Metadata</button>
+                    </div>
+
+                    <div class="progress-wrap" id="progressWrap" style="display:none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width:0%">0%</div>
+                        </div>
+                        <div class="log-box" id="logBox"></div>
+                    </div>
+                </div>
+
+                <!-- PREVIEW -->
+                <div id="previewSection" style="display:none;">
+                    <div class="section-header">
+                        <span class="section-icon">2</span>
+                        <span class="section-title">PREVIEW (first 50 rows)</span>
+                    </div>
+                    <div class="preview-wrap">
+                        <table id="previewTable">
+                            <thead>
+                                <tr>
+                                    <th>Dataset Name</th>
+                                    <th>Dataset UID</th>
+                                    <th>Period Type</th>
+                                    <th>Data Element Name</th>
+                                    <th>Data Element UID</th>
+                                </tr>
+                            </thead>
+                            <tbody id="previewBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="btn-row">
+                        <button class="btn-gold" onclick="exportExcel()">⬇ Download Excel (.xlsx)</button>
+                        <button class="btn-secondary" onclick="exportCSV()">⬇ Download CSV</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="page-footer">
+            <div style="font-weight:700;">Informatics Consultancy Firm-Sierra Leone (ICF-SL)</div>
+            <div>Driving Data-Driven Solutions for Health and Development</div>
+            <div style="font-size:10px; margin-top:4px;">© 2025 ICF-SL</div>
+        </div>
+    </div>
+</div>
+
+<div class="notification" id="notification"></div>
+
+<script>
+    const PROXY = 'https://script.google.com/macros/s/AKfycbyRXc68PYSmDSCYPakAS8Gc9R00kRjmsMYoDujPYMItyquXfwMAJUtRqXLiDlNWbSfDQQ/exec';
+    let cfg = null;
+    let exportRows = []; // flat rows ready for export
+
+    function notify(msg, type) {
+        const n = document.getElementById('notification');
+        n.textContent = msg;
+        n.className = `notification ${type}`;
+        setTimeout(() => { n.className = 'notification'; }, 4000);
+    }
+
+    function log(msg, type = 'info') {
+        const box = document.getElementById('logBox');
+        const div = document.createElement('div');
+        div.className = `log-line ${type}`;
+        div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        box.appendChild(div);
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function setProgress(pct) {
+        const f = document.getElementById('progressFill');
+        f.style.width = pct + '%';
+        f.textContent = pct + '%';
+    }
+
+    function proxyFetch(url) {
+        const auth = 'Basic ' + btoa(`${cfg.username}:${cfg.password}`);
+        const proxyUrl = `${PROXY}?url=${encodeURIComponent(url)}&Authorization=${encodeURIComponent(auth)}`;
+        return fetch(proxyUrl);
+    }
+
+    async function doLogin() {
+        const btn = document.getElementById('loginBtn');
+        btn.disabled = true;
+        btn.textContent = 'Connecting...';
+        const instanceUrl = document.getElementById('instanceUrl').value.trim().replace(/\/$/, '');
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        cfg = { instanceUrl, username, password };
+        try {
+            const auth = 'Basic ' + btoa(`${username}:${password}`);
+            const resp = await fetch(`${PROXY}?url=${encodeURIComponent(instanceUrl + '/api/me')}&Authorization=${encodeURIComponent(auth)}`);
+            if (resp.ok) {
+                const u = await resp.json();
+                const name = `${u.firstName || ''} ${u.surname || ''}`.trim() || 'User';
+                notify(`Connected! Welcome ${name}`, 'success');
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainContent').classList.add('active');
+            } else {
+                notify(`Auth failed (${resp.status})`, 'error');
+                cfg = null;
+            }
+        } catch(e) {
+            notify('Connection error: ' + e.message, 'error');
+            cfg = null;
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Connect to DHIS2';
+        }
+    }
+
+    async function fetchMetadata() {
+        if (!cfg) { notify('Not connected', 'error'); return; }
+        const btn = document.getElementById('fetchBtn');
+        btn.disabled = true;
+        btn.textContent = 'Loading...';
+        document.getElementById('progressWrap').style.display = 'block';
+        document.getElementById('logBox').innerHTML = '';
+        setProgress(0);
+        exportRows = [];
+
+        try {
+            log('Fetching datasets with data elements...', 'info');
+            setProgress(10);
+
+            const url = `${cfg.instanceUrl}/api/dataSets.json?fields=id,displayName,name,periodType,dataSetElements[dataElement[id,displayName,name]]&paging=false`;
+            const resp = await proxyFetch(url);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const data = await resp.json();
+            const datasets = data.dataSets || [];
+
+            setProgress(60);
+            log(`Received ${datasets.length} datasets`, 'success');
+
+            // Build flat rows
+            const elementSet = new Set();
+            datasets.forEach(ds => {
+                const dsName = ds.displayName || ds.name || ds.id;
+                const dsUid = ds.id;
+                const periodType = ds.periodType || '';
+                if (!ds.dataSetElements || ds.dataSetElements.length === 0) {
+                    // Dataset with no elements still listed
+                    exportRows.push({ datasetName: dsName, datasetUid: dsUid, periodType, elementName: '(no data elements)', elementUid: '' });
+                } else {
+                    ds.dataSetElements.forEach(dse => {
+                        if (!dse.dataElement) return;
+                        const deName = dse.dataElement.displayName || dse.dataElement.name || dse.dataElement.id;
+                        const deUid = dse.dataElement.id;
+                        elementSet.add(deUid);
+                        exportRows.push({ datasetName: dsName, datasetUid: dsUid, periodType, elementName: deName, elementUid: deUid });
+                    });
+                }
+            });
+
+            // Sort: dataset name then element name
+            exportRows.sort((a, b) => {
+                const d = a.datasetName.localeCompare(b.datasetName);
+                return d !== 0 ? d : a.elementName.localeCompare(b.elementName);
+            });
+
+            setProgress(90);
+            log(`Built ${exportRows.length} rows (${elementSet.size} unique data elements)`, 'success');
+
+            // Stats
+            document.getElementById('statDatasets').textContent = datasets.length;
+            document.getElementById('statElements').textContent = elementSet.size;
+            document.getElementById('statRows').textContent = exportRows.length;
+
+            // Preview
+            renderPreview();
+            document.getElementById('previewSection').style.display = 'block';
+
+            setProgress(100);
+            log('Done. Use buttons below to export.', 'success');
+            notify(`Loaded: ${datasets.length} datasets, ${elementSet.size} data elements`, 'success');
+
+        } catch(e) {
+            log('ERROR: ' + e.message, 'error');
+            notify('Failed: ' + e.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Reload Metadata';
+        }
+    }
+
+    function renderPreview() {
+        const tbody = document.getElementById('previewBody');
+        tbody.innerHTML = '';
+        const limit = Math.min(50, exportRows.length);
+        for (let i = 0; i < limit; i++) {
+            const r = exportRows[i];
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${r.datasetName}</td>
+                <td class="uid-cell">${r.datasetUid}</td>
+                <td>${r.periodType}</td>
+                <td>${r.elementName}</td>
+                <td class="uid-cell">${r.elementUid}</td>
+            `;
+            tbody.appendChild(tr);
+        }
+        if (exportRows.length > 50) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="5" style="text-align:center;color:#666;font-style:italic;padding:10px;">... and ${exportRows.length - 50} more rows (visible in export)</td>`;
+            tbody.appendChild(tr);
+        }
+    }
+
+    function exportExcel() {
+        if (!exportRows.length) { notify('No data to export', 'error'); return; }
+        const headers = ['Dataset Name', 'Dataset UID', 'Period Type', 'Data Element Name', 'Data Element UID'];
+        const rows = exportRows.map(r => [r.datasetName, r.datasetUid, r.periodType, r.elementName, r.elementUid]);
+        const wsData = [headers, ...rows];
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        ws['!cols'] = [
+            { wch: 45 }, { wch: 14 }, { wch: 14 }, { wch: 55 }, { wch: 14 }
+        ];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Metadata');
+        const filename = `dhis2-metadata-${new Date().toISOString().split('T')[0]}.xlsx`;
+        XLSX.writeFile(wb, filename);
+        notify('Excel downloaded: ' + filename, 'success');
+    }
+
+    function exportCSV() {
+        if (!exportRows.length) { notify('No data to export', 'error'); return; }
+        const header = 'Dataset Name,Dataset UID,Period Type,Data Element Name,Data Element UID';
+        const csvRows = exportRows.map(r => [
+            `"${r.datasetName.replace(/"/g,'""')}"`,
+            r.datasetUid,
+            r.periodType,
+            `"${r.elementName.replace(/"/g,'""')}"`,
+            r.elementUid
+        ].join(','));
+        const csv = [header, ...csvRows].join('\r\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `dhis2-metadata-${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        notify('CSV downloaded', 'success');
+    }
+</script>
+</body>
+</html>
