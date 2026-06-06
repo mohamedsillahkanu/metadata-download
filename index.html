@@ -31,9 +31,9 @@
         /* MAIN */
         .main-content { display: none; padding: 20px; }
         .main-content.active { display: block; }
-        .page-container { max-width: 1000px; margin: 0 auto; }
+        .page-container { max-width: 1400px; margin: 0 auto; }
 
-        .page-header { background: #004080; color: #fff; padding: 25px 30px; text-align: center; border-radius: 8px 8px 0 0; margin-bottom: 0; }
+        .page-header { background: #004080; color: #fff; padding: 25px 30px; text-align: center; border-radius: 8px 8px 0 0; }
         .page-header .logo-row { display: flex; justify-content: center; margin-bottom: 12px; }
         .page-header .logo-box { background: #fff; border: none; }
         .page-header h3 { font-size: 13px; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
@@ -42,60 +42,97 @@
         .page-header .subtitle { font-size: 13px; opacity: 0.9; }
 
         .content-card { border: 4px double #004080; border-top: none; border-radius: 0 0 12px 12px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .content-inner { padding: 30px; }
+        .content-inner { padding: 28px; }
 
         .section-header { background: #004080; color: #fff; padding: 13px 18px; border-radius: 6px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
         .section-icon { background: #fff; color: #004080; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
         .section-title { font-size: 15px; font-weight: 700; letter-spacing: 0.5px; }
 
-        /* STATUS BOX */
-        .status-box { background: #f8f9fa; border: 2px solid #004080; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-        .status-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
-        .stat-card { background: #fff; border: 2px solid #004080; border-radius: 6px; padding: 14px 20px; flex: 1; min-width: 120px; text-align: center; }
-        .stat-number { font-size: 28px; font-weight: 700; color: #004080; line-height: 1; }
-        .stat-label { font-size: 11px; color: #666; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* TYPE TABS */
+        .type-tabs { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+        .type-tab { padding: 9px 22px; background: #fff; color: #004080; border: 2px solid #004080; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
+        .type-tab:hover:not(.active) { background: #e7f3ff; }
+        .type-tab.active { background: #004080; color: #fff; }
+        .type-tab .badge { display: inline-block; background: #ffc107; color: #000; border-radius: 10px; padding: 1px 8px; font-size: 11px; margin-left: 6px; }
+        .type-tab.active .badge { background: #fff; color: #004080; }
+
+        /* DUAL PANEL */
+        .dual-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .panel { background: #f8f9fa; border: 2px solid #004080; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+        .panel-header { background: #004080; color: #fff; padding: 11px 15px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .panel-title { font-size: 14px; font-weight: 700; }
+        .panel-count { background: #fff; color: #004080; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+        .panel-search-wrap { position: relative; flex-shrink: 0; }
+        .panel-search { width: 100%; padding: 9px 70px 9px 12px; border: none; border-bottom: 2px solid #004080; font-family: 'Oswald', Arial, sans-serif; font-size: 13px; background: #fff; }
+        .panel-search:focus { outline: none; background: #e7f3ff; }
+        .clear-search-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #dc3545; color: #fff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Oswald', Arial, sans-serif; }
+        .panel-actions { display: flex; gap: 0; flex-shrink: 0; }
+        .panel-action-btn { flex: 1; padding: 8px; border: none; font-family: 'Oswald', Arial, sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; transition: background 0.2s; text-transform: uppercase; }
+        .btn-add-all { background: #28a745; color: #fff; }
+        .btn-add-all:hover { background: #218838; }
+        .btn-clear-all { background: #dc3545; color: #fff; }
+        .btn-clear-all:hover { background: #c82333; }
+        .panel-body { flex: 1; overflow-y: auto; padding: 8px; max-height: 420px; }
+
+        /* Available items — grouped by dataset/type */
+        .group-header { background: #004080; color: #fff; padding: 8px 12px; border-radius: 4px; margin: 6px 0 3px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 8px; user-select: none; }
+        .group-header:hover { background: #0056b3; }
+        .group-toggle { font-size: 10px; }
+        .group-name { flex: 1; }
+        .group-count { background: #ffc107; color: #000; padding: 1px 7px; border-radius: 10px; font-size: 11px; }
+        .group-children { display: none; margin-left: 12px; border-left: 2px solid #ddd; padding-left: 8px; margin-bottom: 4px; }
+        .group-children.open { display: block; }
+
+        .avail-item { padding: 7px 10px; margin: 2px 0; background: #fff; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; transition: border-color 0.15s; }
+        .avail-item:hover { border-color: #004080; background: #e7f3ff; }
+        .avail-item-name { flex: 1; }
+        .avail-item-uid { font-family: 'Courier New', monospace; font-size: 10px; color: #888; }
+        .add-btn { background: #28a745; color: #fff; border: none; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Oswald', Arial, sans-serif; white-space: nowrap; }
+        .add-btn:hover { background: #218838; }
+
+        /* Selected items */
+        .sel-item { padding: 8px 10px; margin: 3px 0; background: #d4edda; border: 1px solid #28a745; border-radius: 4px; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+        .sel-item-info { flex: 1; }
+        .sel-item-name { display: block; font-weight: 600; }
+        .sel-item-meta { display: block; font-size: 10px; color: #555; font-family: 'Courier New', monospace; margin-top: 2px; }
+        .remove-btn { background: #dc3545; color: #fff; border: none; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-size: 14px; line-height: 1; flex-shrink: 0; }
+        .remove-btn:hover { background: #c82333; }
 
         /* BUTTONS */
         .btn-gold { padding: 13px 28px; background: #ffc107; color: #000; border: 2px solid #ffc107; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
-        .btn-gold:hover { background: #e0a800; border-color: #e0a800; }
+        .btn-gold:hover { background: #e0a800; }
         .btn-gold:disabled { background: #e9ecef; color: #666; border-color: #ccc; cursor: wait; }
         .btn-secondary { padding: 13px 24px; background: #fff; color: #004080; border: 2px solid #004080; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
         .btn-secondary:hover { background: #004080; color: #fff; }
         .btn-secondary:disabled { opacity: 0.6; cursor: wait; }
-        .btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+        .btn-reset { padding: 13px 24px; background: #fff; color: #dc3545; border: 2px solid #dc3545; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
+        .btn-reset:hover { background: #dc3545; color: #fff; }
+        .btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 24px; }
 
         /* PROGRESS */
-        .progress-wrap { margin: 18px 0; }
-        .progress-bar { height: 24px; background: #e9ecef; border-radius: 6px; overflow: hidden; border: 2px solid #004080; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #004080, #0066cc); transition: width 0.3s; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 700; min-width: 36px; }
-        .log-box { margin-top: 14px; background: #1a1a2e; border-radius: 6px; padding: 14px; max-height: 180px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 11px; }
-        .log-line { padding: 3px 0; border-bottom: 1px solid #2a2a3e; }
+        .progress-wrap { margin: 14px 0; display: none; }
+        .progress-bar { height: 22px; background: #e9ecef; border-radius: 6px; overflow: hidden; border: 2px solid #004080; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #004080, #0066cc); transition: width 0.3s; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 700; min-width: 32px; }
+        .log-box { margin-top: 10px; background: #1a1a2e; border-radius: 6px; padding: 12px; max-height: 150px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 11px; }
+        .log-line { padding: 2px 0; border-bottom: 1px solid #2a2a3e; }
         .log-line.info { color: #17a2b8; }
         .log-line.success { color: #28a745; }
         .log-line.error { color: #dc3545; }
         .log-line.warning { color: #ffc107; }
 
-        /* PREVIEW TABLE */
-        .preview-wrap { overflow-x: auto; border: 2px solid #004080; border-radius: 6px; margin-top: 16px; max-height: 320px; overflow-y: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        thead th { background: #004080; color: #fff; padding: 10px 14px; text-align: left; white-space: nowrap; position: sticky; top: 0; }
-        tbody tr:nth-child(even) { background: #f0f4f8; }
-        tbody tr:hover { background: #d4e8ff; }
-        tbody td { padding: 8px 14px; border-bottom: 1px solid #ddd; white-space: nowrap; }
-        .uid-cell { font-family: 'Courier New', monospace; font-size: 11px; color: #0056b3; }
-
         /* NOTIFICATION */
-        .notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 14px 28px; border-radius: 8px; font-weight: 600; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-size: 13px; }
+        .notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 13px 26px; border-radius: 8px; font-weight: 600; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-size: 13px; }
         .notification.success { background: #d4edda; color: #155724; border: 2px solid #28a745; display: block; }
         .notification.error { background: #f8d7da; color: #721c24; border: 2px solid #dc3545; display: block; }
         .notification.info { background: #e7f3ff; color: #004080; border: 2px solid #004080; display: block; }
 
         .page-footer { background: #004080; color: #fff; padding: 18px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px; line-height: 1.8; }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
         ::-webkit-scrollbar { width: 7px; height: 7px; }
         ::-webkit-scrollbar-thumb { background: #004080; border-radius: 4px; }
         ::-webkit-scrollbar-track { background: #f8f9fa; }
+
+        @media (max-width: 768px) { .dual-panel { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -110,7 +147,7 @@
         </div>
         <div class="login-header">
             <h1>DHIS2 METADATA EXPORT</h1>
-            <p>Data Elements · Datasets · UIDs</p>
+            <p>Select Data Elements &amp; Indicators to Export</p>
         </div>
         <div class="form-group">
             <label class="form-label">DHIS2 Instance URL</label>
@@ -140,70 +177,131 @@
             <h3>Informatics Consultancy Firm-Sierra Leone (ICF-SL)</h3>
             <p class="tagline">Driving Data-Driven Solutions for Health and Development</p>
             <h1>DHIS2 METADATA EXPORT TOOL</h1>
-            <p class="subtitle">Export Data Elements and Datasets with UIDs to Excel or CSV</p>
+            <p class="subtitle">Select Data Elements and Indicators, then Export with UIDs to Excel or CSV</p>
         </div>
 
         <div class="content-card">
             <div class="content-inner">
 
+                <!-- SECTION 1: LOAD -->
                 <div class="section-header">
                     <span class="section-icon">1</span>
-                    <span class="section-title">FETCH METADATA</span>
+                    <span class="section-title">LOAD METADATA</span>
                 </div>
 
-                <div class="status-box">
-                    <div class="status-row">
-                        <div class="stat-card">
-                            <div class="stat-number" id="statDatasets">0</div>
-                            <div class="stat-label">Datasets</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="statElements">0</div>
-                            <div class="stat-label">Data Elements</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="statRows">0</div>
-                            <div class="stat-label">Export Rows</div>
-                        </div>
-                    </div>
+                <div style="margin-bottom:18px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+                    <button class="btn-secondary" id="fetchBtn" onclick="fetchMetadata()" style="width:auto;">Load Metadata</button>
+                    <span id="loadStatus" style="font-size:13px; color:#666;"></span>
+                </div>
 
-                    <div class="btn-row" style="margin-top: 0; justify-content: flex-start;">
-                        <button class="btn-secondary" id="fetchBtn" onclick="fetchMetadata()">Load Metadata</button>
+                <div class="progress-wrap" id="progressWrap">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width:0%">0%</div>
                     </div>
+                    <div class="log-box" id="logBox"></div>
+                </div>
 
-                    <div class="progress-wrap" id="progressWrap" style="display:none;">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill" style="width:0%">0%</div>
-                        </div>
-                        <div class="log-box" id="logBox"></div>
+                <!-- SECTION 2: SELECT -->
+                <div class="section-header" style="margin-top:24px;">
+                    <span class="section-icon">2</span>
+                    <span class="section-title">SELECT VARIABLES</span>
+                </div>
+
+                <!-- Type tabs -->
+                <div class="type-tabs">
+                    <div class="type-tab active" id="tabDE" onclick="switchType('de')">
+                        Data Elements <span class="badge" id="badgeDE">0</span>
+                    </div>
+                    <div class="type-tab" id="tabInd" onclick="switchType('ind')">
+                        Indicators <span class="badge" id="badgeInd">0</span>
                     </div>
                 </div>
 
-                <!-- PREVIEW -->
-                <div id="previewSection" style="display:none;">
-                    <div class="section-header">
-                        <span class="section-icon">2</span>
-                        <span class="section-title">PREVIEW (first 50 rows)</span>
+                <!-- DATA ELEMENTS panel pair -->
+                <div id="paneDE">
+                    <div class="dual-panel">
+                        <!-- Available -->
+                        <div class="panel">
+                            <div class="panel-header">
+                                <span class="panel-title">Available Data Elements</span>
+                                <span class="panel-count" id="deAvailCount">0</span>
+                            </div>
+                            <div class="panel-search-wrap">
+                                <input class="panel-search" id="deAvailSearch" placeholder="Search data elements..." oninput="filterAvail('de')">
+                                <button class="clear-search-btn" onclick="clearSearch('de')">&#x2715; Clear</button>
+                            </div>
+                            <div class="panel-actions">
+                                <button class="panel-action-btn btn-add-all" onclick="addAll('de')">Add All Visible</button>
+                            </div>
+                            <div class="panel-body" id="deAvailPanel">
+                                <p style="color:#999;text-align:center;padding:20px;font-size:13px;">Click "Load Metadata" to start</p>
+                            </div>
+                        </div>
+                        <!-- Selected -->
+                        <div class="panel">
+                            <div class="panel-header">
+                                <span class="panel-title">Selected Data Elements</span>
+                                <span class="panel-count" id="deSelCount">0</span>
+                            </div>
+                            <div class="panel-search-wrap">
+                                <input class="panel-search" id="deSelSearch" placeholder="Search selected..." oninput="filterSel('de')">
+                                <button class="clear-search-btn" onclick="clearSelSearch('de')">&#x2715; Clear</button>
+                            </div>
+                            <div class="panel-actions">
+                                <button class="panel-action-btn btn-clear-all" onclick="clearAll('de')">Remove All</button>
+                            </div>
+                            <div class="panel-body" id="deSelPanel">
+                                <p style="color:#999;text-align:center;padding:20px;font-size:13px;">No data elements selected</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="preview-wrap">
-                        <table id="previewTable">
-                            <thead>
-                                <tr>
-                                    <th>Dataset Name</th>
-                                    <th>Dataset UID</th>
-                                    <th>Period Type</th>
-                                    <th>Data Element Name</th>
-                                    <th>Data Element UID</th>
-                                </tr>
-                            </thead>
-                            <tbody id="previewBody"></tbody>
-                        </table>
-                    </div>
+                </div>
 
-                    <div class="btn-row">
-                        <button class="btn-gold" onclick="exportExcel()">⬇ Download Excel (.xlsx)</button>
-                        <button class="btn-secondary" onclick="exportCSV()">⬇ Download CSV</button>
+                <!-- INDICATORS panel pair -->
+                <div id="paneInd" style="display:none;">
+                    <div class="dual-panel">
+                        <!-- Available -->
+                        <div class="panel">
+                            <div class="panel-header">
+                                <span class="panel-title">Available Indicators</span>
+                                <span class="panel-count" id="indAvailCount">0</span>
+                            </div>
+                            <div class="panel-search-wrap">
+                                <input class="panel-search" id="indAvailSearch" placeholder="Search indicators..." oninput="filterAvail('ind')">
+                                <button class="clear-search-btn" onclick="clearSearch('ind')">&#x2715; Clear</button>
+                            </div>
+                            <div class="panel-actions">
+                                <button class="panel-action-btn btn-add-all" onclick="addAll('ind')">Add All Visible</button>
+                            </div>
+                            <div class="panel-body" id="indAvailPanel">
+                                <p style="color:#999;text-align:center;padding:20px;font-size:13px;">Click "Load Metadata" to start</p>
+                            </div>
+                        </div>
+                        <!-- Selected -->
+                        <div class="panel">
+                            <div class="panel-header">
+                                <span class="panel-title">Selected Indicators</span>
+                                <span class="panel-count" id="indSelCount">0</span>
+                            </div>
+                            <div class="panel-search-wrap">
+                                <input class="panel-search" id="indSelSearch" placeholder="Search selected..." oninput="filterSel('ind')">
+                                <button class="clear-search-btn" onclick="clearSelSearch('ind')">&#x2715; Clear</button>
+                            </div>
+                            <div class="panel-actions">
+                                <button class="panel-action-btn btn-clear-all" onclick="clearAll('ind')">Remove All</button>
+                            </div>
+                            <div class="panel-body" id="indSelPanel">
+                                <p style="color:#999;text-align:center;padding:20px;font-size:13px;">No indicators selected</p>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <!-- EXPORT BUTTONS -->
+                <div class="btn-row">
+                    <button class="btn-gold" onclick="exportExcel()">⬇ Download Excel (.xlsx)</button>
+                    <button class="btn-secondary" onclick="exportCSV()">⬇ Download CSV</button>
+                    <button class="btn-reset" onclick="resetAll()">Reset All</button>
                 </div>
 
             </div>
@@ -212,7 +310,7 @@
         <div class="page-footer">
             <div style="font-weight:700;">Informatics Consultancy Firm-Sierra Leone (ICF-SL)</div>
             <div>Driving Data-Driven Solutions for Health and Development</div>
-            <div style="font-size:10px; margin-top:4px;">© 2025 ICF-SL</div>
+            <div style="font-size:10px;margin-top:4px;">© 2025 ICF-SL</div>
         </div>
     </div>
 </div>
@@ -220,201 +318,425 @@
 <div class="notification" id="notification"></div>
 
 <script>
-    const PROXY = 'https://script.google.com/macros/s/AKfycbyRXc68PYSmDSCYPakAS8Gc9R00kRjmsMYoDujPYMItyquXfwMAJUtRqXLiDlNWbSfDQQ/exec';
-    let cfg = null;
-    let exportRows = []; // flat rows ready for export
+const PROXY = 'https://script.google.com/macros/s/AKfycbyRXc68PYSmDSCYPakAS8Gc9R00kRjmsMYoDujPYMItyquXfwMAJUtRqXLiDlNWbSfDQQ/exec';
+let cfg = null;
 
-    function notify(msg, type) {
-        const n = document.getElementById('notification');
-        n.textContent = msg;
-        n.className = `notification ${type}`;
-        setTimeout(() => { n.className = 'notification'; }, 4000);
-    }
+// Raw data from API
+let allDataElements = []; // [{ uid, name, datasetUid, datasetName, periodType }]
+let allIndicators   = []; // [{ uid, name, type, annualized, numDesc, denDesc, numerator, denominator }]
 
-    function log(msg, type = 'info') {
-        const box = document.getElementById('logBox');
-        const div = document.createElement('div');
-        div.className = `log-line ${type}`;
-        div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
-        box.appendChild(div);
-        box.scrollTop = box.scrollHeight;
-    }
+// Selected sets — keys are UIDs
+let selDE  = new Map(); // uid -> object
+let selInd = new Map();
 
-    function setProgress(pct) {
-        const f = document.getElementById('progressFill');
-        f.style.width = pct + '%';
-        f.textContent = pct + '%';
-    }
+let currentType = 'de';
 
-    function proxyFetch(url) {
-        const auth = 'Basic ' + btoa(`${cfg.username}:${cfg.password}`);
-        const proxyUrl = `${PROXY}?url=${encodeURIComponent(url)}&Authorization=${encodeURIComponent(auth)}`;
-        return fetch(proxyUrl);
-    }
+// ── Utility ────────────────────────────────────────────────────────────────
+function notify(msg, type) {
+    const n = document.getElementById('notification');
+    n.textContent = msg;
+    n.className = 'notification ' + type;
+    setTimeout(() => { n.className = 'notification'; }, 5000);
+}
+function log(msg, type = 'info') {
+    const box = document.getElementById('logBox');
+    const d = document.createElement('div');
+    d.className = 'log-line ' + type;
+    d.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+    box.appendChild(d);
+    box.scrollTop = box.scrollHeight;
+}
+function setProgress(p) {
+    const f = document.getElementById('progressFill');
+    f.style.width = p + '%';
+    f.textContent = p + '%';
+}
+function proxyFetch(url) {
+    const auth = 'Basic ' + btoa(cfg.username + ':' + cfg.password);
+    return fetch(PROXY + '?url=' + encodeURIComponent(url) + '&Authorization=' + encodeURIComponent(auth));
+}
+function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-    async function doLogin() {
-        const btn = document.getElementById('loginBtn');
-        btn.disabled = true;
-        btn.textContent = 'Connecting...';
-        const instanceUrl = document.getElementById('instanceUrl').value.trim().replace(/\/$/, '');
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value.trim();
-        cfg = { instanceUrl, username, password };
-        try {
-            const auth = 'Basic ' + btoa(`${username}:${password}`);
-            const resp = await fetch(`${PROXY}?url=${encodeURIComponent(instanceUrl + '/api/me')}&Authorization=${encodeURIComponent(auth)}`);
-            if (resp.ok) {
-                const u = await resp.json();
-                const name = `${u.firstName || ''} ${u.surname || ''}`.trim() || 'User';
-                notify(`Connected! Welcome ${name}`, 'success');
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainContent').classList.add('active');
-            } else {
-                notify(`Auth failed (${resp.status})`, 'error');
-                cfg = null;
-            }
-        } catch(e) {
-            notify('Connection error: ' + e.message, 'error');
-            cfg = null;
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Connect to DHIS2';
+// ── Login ──────────────────────────────────────────────────────────────────
+async function doLogin() {
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true; btn.textContent = 'Connecting...';
+    const instanceUrl = document.getElementById('instanceUrl').value.trim().replace(/\/$/, '');
+    const username    = document.getElementById('username').value.trim();
+    const password    = document.getElementById('password').value.trim();
+    cfg = { instanceUrl, username, password };
+    try {
+        const auth = 'Basic ' + btoa(username + ':' + password);
+        const r = await fetch(PROXY + '?url=' + encodeURIComponent(instanceUrl + '/api/me') + '&Authorization=' + encodeURIComponent(auth));
+        if (r.ok) {
+            const u = await r.json();
+            const name = ((u.firstName || '') + ' ' + (u.surname || '')).trim() || 'User';
+            notify('Connected! Welcome ' + name, 'success');
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainContent').classList.add('active');
+        } else {
+            notify('Auth failed (' + r.status + ')', 'error'); cfg = null;
         }
-    }
+    } catch(e) { notify('Connection error: ' + e.message, 'error'); cfg = null; }
+    finally { btn.disabled = false; btn.textContent = 'Connect to DHIS2'; }
+}
 
-    async function fetchMetadata() {
-        if (!cfg) { notify('Not connected', 'error'); return; }
-        const btn = document.getElementById('fetchBtn');
-        btn.disabled = true;
-        btn.textContent = 'Loading...';
-        document.getElementById('progressWrap').style.display = 'block';
-        document.getElementById('logBox').innerHTML = '';
-        setProgress(0);
-        exportRows = [];
+// ── Tab switch ─────────────────────────────────────────────────────────────
+function switchType(type) {
+    currentType = type;
+    document.getElementById('paneDE').style.display  = type === 'de'  ? 'block' : 'none';
+    document.getElementById('paneInd').style.display = type === 'ind' ? 'block' : 'none';
+    document.getElementById('tabDE').classList.toggle('active',  type === 'de');
+    document.getElementById('tabInd').classList.toggle('active', type === 'ind');
+}
 
-        try {
-            log('Fetching datasets with data elements...', 'info');
-            setProgress(10);
+// ── Fetch metadata ─────────────────────────────────────────────────────────
+async function fetchMetadata() {
+    if (!cfg) { notify('Not connected', 'error'); return; }
+    const btn = document.getElementById('fetchBtn');
+    btn.disabled = true; btn.textContent = 'Loading...';
+    document.getElementById('progressWrap').style.display = 'block';
+    document.getElementById('logBox').innerHTML = '';
+    setProgress(0);
+    allDataElements = []; allIndicators = [];
 
-            const url = `${cfg.instanceUrl}/api/dataSets.json?fields=id,displayName,name,periodType,dataSetElements[dataElement[id,displayName,name]]&paging=false`;
-            const resp = await proxyFetch(url);
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            const data = await resp.json();
-            const datasets = data.dataSets || [];
+    try {
+        // 1. Datasets + data elements
+        log('Fetching datasets with data elements...', 'info');
+        setProgress(5);
+        const dsResp = await proxyFetch(cfg.instanceUrl + '/api/dataSets.json?fields=id,displayName,name,periodType,dataSetElements[dataElement[id,displayName,name]]&paging=false');
+        if (!dsResp.ok) throw new Error('Datasets HTTP ' + dsResp.status);
+        const dsData = await dsResp.json();
+        const datasets = dsData.dataSets || [];
+        setProgress(30);
+        log('Received ' + datasets.length + ' datasets', 'success');
 
-            setProgress(60);
-            log(`Received ${datasets.length} datasets`, 'success');
-
-            // Build flat rows
-            const elementSet = new Set();
-            datasets.forEach(ds => {
-                const dsName = ds.displayName || ds.name || ds.id;
-                const dsUid = ds.id;
-                const periodType = ds.periodType || '';
-                if (!ds.dataSetElements || ds.dataSetElements.length === 0) {
-                    // Dataset with no elements still listed
-                    exportRows.push({ datasetName: dsName, datasetUid: dsUid, periodType, elementName: '(no data elements)', elementUid: '' });
-                } else {
-                    ds.dataSetElements.forEach(dse => {
-                        if (!dse.dataElement) return;
-                        const deName = dse.dataElement.displayName || dse.dataElement.name || dse.dataElement.id;
-                        const deUid = dse.dataElement.id;
-                        elementSet.add(deUid);
-                        exportRows.push({ datasetName: dsName, datasetUid: dsUid, periodType, elementName: deName, elementUid: deUid });
+        const deMap = new Map(); // uid -> object (avoid duplicates across datasets)
+        datasets.forEach(ds => {
+            const dsName = ds.displayName || ds.name || ds.id;
+            (ds.dataSetElements || []).forEach(dse => {
+                if (!dse.dataElement) return;
+                const uid = dse.dataElement.id;
+                if (!deMap.has(uid)) {
+                    deMap.set(uid, {
+                        uid,
+                        name:       dse.dataElement.displayName || dse.dataElement.name || uid,
+                        datasetUid:  ds.id,
+                        datasetName: dsName,
+                        periodType:  ds.periodType || ''
                     });
                 }
+                // If the element appears in multiple datasets, append extra dataset info
+                else {
+                    const existing = deMap.get(uid);
+                    if (!existing.extraDatasets) existing.extraDatasets = [];
+                    existing.extraDatasets.push({ datasetUid: ds.id, datasetName: dsName, periodType: ds.periodType || '' });
+                }
             });
+        });
+        allDataElements = Array.from(deMap.values()).sort((a,b) => a.name.localeCompare(b.name));
+        log('Built ' + allDataElements.length + ' unique data elements', 'success');
+        setProgress(50);
 
-            // Sort: dataset name then element name
-            exportRows.sort((a, b) => {
-                const d = a.datasetName.localeCompare(b.datasetName);
-                return d !== 0 ? d : a.elementName.localeCompare(b.elementName);
+        // 2. Indicator types
+        log('Fetching indicator types...', 'info');
+        const typeMap = {};
+        const itResp = await proxyFetch(cfg.instanceUrl + '/api/indicatorTypes.json?fields=id,displayName,name,factor,number&paging=false');
+        if (itResp.ok) {
+            const itData = await itResp.json();
+            (itData.indicatorTypes || []).forEach(it => {
+                typeMap[it.id] = it.number ? 'Number' : ((it.displayName || it.name) + ' (×' + (it.factor || 1) + ')');
             });
-
-            setProgress(90);
-            log(`Built ${exportRows.length} rows (${elementSet.size} unique data elements)`, 'success');
-
-            // Stats
-            document.getElementById('statDatasets').textContent = datasets.length;
-            document.getElementById('statElements').textContent = elementSet.size;
-            document.getElementById('statRows').textContent = exportRows.length;
-
-            // Preview
-            renderPreview();
-            document.getElementById('previewSection').style.display = 'block';
-
-            setProgress(100);
-            log('Done. Use buttons below to export.', 'success');
-            notify(`Loaded: ${datasets.length} datasets, ${elementSet.size} data elements`, 'success');
-
-        } catch(e) {
-            log('ERROR: ' + e.message, 'error');
-            notify('Failed: ' + e.message, 'error');
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Reload Metadata';
         }
+        setProgress(65);
+
+        // 3. Indicators
+        log('Fetching indicators...', 'info');
+        const indResp = await proxyFetch(cfg.instanceUrl + '/api/indicators.json?fields=id,displayName,name,annualized,indicatorType[id],numerator,denominator,numeratorDescription,denominatorDescription&paging=false');
+        if (!indResp.ok) throw new Error('Indicators HTTP ' + indResp.status);
+        const indData = await indResp.json();
+        const rawInds = indData.indicators || [];
+        setProgress(85);
+        log('Received ' + rawInds.length + ' indicators', 'success');
+
+        allIndicators = rawInds.map(ind => ({
+            uid:         ind.id,
+            name:        ind.displayName || ind.name || ind.id,
+            type:        (ind.indicatorType && typeMap[ind.indicatorType.id]) ? typeMap[ind.indicatorType.id] : '',
+            annualized:  ind.annualized ? 'Yes' : 'No',
+            numDesc:     ind.numeratorDescription   || '',
+            denDesc:     ind.denominatorDescription || '',
+            numerator:   ind.numerator   || '',
+            denominator: ind.denominator || ''
+        })).sort((a,b) => a.name.localeCompare(b.name));
+
+        // Update badge counts
+        document.getElementById('badgeDE').textContent  = allDataElements.length;
+        document.getElementById('badgeInd').textContent = allIndicators.length;
+        document.getElementById('loadStatus').textContent =
+            allDataElements.length + ' data elements · ' + allIndicators.length + ' indicators loaded';
+
+        renderAvail('de');
+        renderAvail('ind');
+        setProgress(100);
+        log('Done — select variables and export below.', 'success');
+        notify('Loaded: ' + allDataElements.length + ' data elements · ' + allIndicators.length + ' indicators', 'success');
+
+    } catch(e) {
+        log('ERROR: ' + e.message, 'error');
+        notify('Failed: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false; btn.textContent = 'Reload Metadata';
+    }
+}
+
+// ── Render available panel ─────────────────────────────────────────────────
+function renderAvail(type) {
+    const search   = document.getElementById(type === 'de' ? 'deAvailSearch' : 'indAvailSearch').value.toLowerCase();
+    const panel    = document.getElementById(type === 'de' ? 'deAvailPanel'  : 'indAvailPanel');
+    const selMap   = type === 'de' ? selDE : selInd;
+    const allItems = type === 'de' ? allDataElements : allIndicators;
+
+    // Filter out already selected and apply search
+    const visible = allItems.filter(item => {
+        if (selMap.has(item.uid)) return false;
+        if (search && !item.name.toLowerCase().includes(search)) return false;
+        return true;
+    });
+
+    document.getElementById(type === 'de' ? 'deAvailCount' : 'indAvailCount').textContent = visible.length;
+
+    if (visible.length === 0) {
+        panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;font-size:13px;">' +
+            (allItems.length === 0 ? 'Click "Load Metadata" to start' : 'All items selected or no match') + '</p>';
+        return;
     }
 
-    function renderPreview() {
-        const tbody = document.getElementById('previewBody');
-        tbody.innerHTML = '';
-        const limit = Math.min(50, exportRows.length);
-        for (let i = 0; i < limit; i++) {
-            const r = exportRows[i];
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${r.datasetName}</td>
-                <td class="uid-cell">${r.datasetUid}</td>
-                <td>${r.periodType}</td>
-                <td>${r.elementName}</td>
-                <td class="uid-cell">${r.elementUid}</td>
-            `;
-            tbody.appendChild(tr);
-        }
-        if (exportRows.length > 50) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td colspan="5" style="text-align:center;color:#666;font-style:italic;padding:10px;">... and ${exportRows.length - 50} more rows (visible in export)</td>`;
-            tbody.appendChild(tr);
-        }
+    const frag = document.createDocumentFragment();
+
+    if (type === 'de') {
+        // Group by dataset
+        const byDataset = new Map();
+        visible.forEach(item => {
+            const key = item.datasetName;
+            if (!byDataset.has(key)) byDataset.set(key, { dsUid: item.datasetUid, items: [] });
+            byDataset.get(key).items.push(item);
+        });
+
+        byDataset.forEach((group, dsName) => {
+            // Group header
+            const hdr = document.createElement('div');
+            hdr.className = 'group-header';
+            hdr.innerHTML = '<span class="group-toggle">▶</span><span class="group-name">' + esc(dsName) + '</span>' +
+                            '<span class="group-count">' + group.items.length + '</span>';
+            const children = document.createElement('div');
+            children.className = 'group-children';
+            hdr.onclick = () => {
+                const open = children.classList.toggle('open');
+                hdr.querySelector('.group-toggle').textContent = open ? '▼' : '▶';
+            };
+
+            group.items.forEach(item => {
+                children.appendChild(makeAvailItem(item, type));
+            });
+            frag.appendChild(hdr);
+            frag.appendChild(children);
+        });
+    } else {
+        // Indicators: flat list (could group by type if needed)
+        visible.forEach(item => frag.appendChild(makeAvailItem(item, type)));
     }
 
-    function exportExcel() {
-        if (!exportRows.length) { notify('No data to export', 'error'); return; }
-        const headers = ['Dataset Name', 'Dataset UID', 'Period Type', 'Data Element Name', 'Data Element UID'];
-        const rows = exportRows.map(r => [r.datasetName, r.datasetUid, r.periodType, r.elementName, r.elementUid]);
-        const wsData = [headers, ...rows];
-        const ws = XLSX.utils.aoa_to_sheet(wsData);
-        ws['!cols'] = [
-            { wch: 45 }, { wch: 14 }, { wch: 14 }, { wch: 55 }, { wch: 14 }
-        ];
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Metadata');
-        const filename = `dhis2-metadata-${new Date().toISOString().split('T')[0]}.xlsx`;
-        XLSX.writeFile(wb, filename);
-        notify('Excel downloaded: ' + filename, 'success');
+    panel.innerHTML = '';
+    panel.appendChild(frag);
+}
+
+function makeAvailItem(item, type) {
+    const div = document.createElement('div');
+    div.className = 'avail-item';
+    div.dataset.uid = item.uid;
+    div.innerHTML =
+        '<span class="avail-item-name">' + esc(item.name) + '</span>' +
+        '<span class="avail-item-uid">' + item.uid + '</span>' +
+        '<button class="add-btn" onclick="addItem(\'' + type + '\',\'' + item.uid + '\')">+ Add</button>';
+    div.ondblclick = () => addItem(type, item.uid);
+    return div;
+}
+
+// ── Render selected panel ──────────────────────────────────────────────────
+function renderSel(type) {
+    const search = document.getElementById(type === 'de' ? 'deSelSearch' : 'indSelSearch').value.toLowerCase();
+    const panel  = document.getElementById(type === 'de' ? 'deSelPanel'  : 'indSelPanel');
+    const selMap = type === 'de' ? selDE : selInd;
+
+    document.getElementById(type === 'de' ? 'deSelCount' : 'indSelCount').textContent = selMap.size;
+
+    if (selMap.size === 0) {
+        panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;font-size:13px;">No items selected</p>';
+        return;
     }
 
-    function exportCSV() {
-        if (!exportRows.length) { notify('No data to export', 'error'); return; }
-        const header = 'Dataset Name,Dataset UID,Period Type,Data Element Name,Data Element UID';
-        const csvRows = exportRows.map(r => [
-            `"${r.datasetName.replace(/"/g,'""')}"`,
-            r.datasetUid,
-            r.periodType,
-            `"${r.elementName.replace(/"/g,'""')}"`,
-            r.elementUid
-        ].join(','));
-        const csv = [header, ...csvRows].join('\r\n');
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `dhis2-metadata-${new Date().toISOString().split('T')[0]}.csv`;
-        a.click();
-        URL.revokeObjectURL(url);
-        notify('CSV downloaded', 'success');
+    const items = Array.from(selMap.values())
+        .filter(item => !search || item.name.toLowerCase().includes(search))
+        .sort((a,b) => a.name.localeCompare(b.name));
+
+    const frag = document.createDocumentFragment();
+    items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'sel-item';
+        div.dataset.uid = item.uid;
+        const meta = type === 'de'
+            ? (item.datasetName + ' · ' + item.uid)
+            : (item.type + ' · ' + item.uid);
+        div.innerHTML =
+            '<span class="sel-item-info">' +
+                '<span class="sel-item-name">' + esc(item.name) + '</span>' +
+                '<span class="sel-item-meta">' + esc(meta) + '</span>' +
+            '</span>' +
+            '<button class="remove-btn" onclick="removeItem(\'' + type + '\',\'' + item.uid + '\')" title="Remove">×</button>';
+        frag.appendChild(div);
+    });
+
+    panel.innerHTML = '';
+    panel.appendChild(frag);
+}
+
+// ── Add / Remove ───────────────────────────────────────────────────────────
+function addItem(type, uid) {
+    const all    = type === 'de' ? allDataElements : allIndicators;
+    const selMap = type === 'de' ? selDE : selInd;
+    const item   = all.find(i => i.uid === uid);
+    if (!item || selMap.has(uid)) return;
+    selMap.set(uid, item);
+    renderAvail(type);
+    renderSel(type);
+}
+
+function removeItem(type, uid) {
+    const selMap = type === 'de' ? selDE : selInd;
+    selMap.delete(uid);
+    renderAvail(type);
+    renderSel(type);
+}
+
+function addAll(type) {
+    const search   = document.getElementById(type === 'de' ? 'deAvailSearch' : 'indAvailSearch').value.toLowerCase();
+    const all      = type === 'de' ? allDataElements : allIndicators;
+    const selMap   = type === 'de' ? selDE : selInd;
+    all.filter(item => !selMap.has(item.uid) && (!search || item.name.toLowerCase().includes(search)))
+       .forEach(item => selMap.set(item.uid, item));
+    renderAvail(type);
+    renderSel(type);
+}
+
+function clearAll(type) {
+    const selMap = type === 'de' ? selDE : selInd;
+    selMap.clear();
+    renderAvail(type);
+    renderSel(type);
+}
+
+// ── Search / filter ────────────────────────────────────────────────────────
+function filterAvail(type) { renderAvail(type); }
+function filterSel(type)   { renderSel(type);   }
+function clearSearch(type) {
+    document.getElementById(type === 'de' ? 'deAvailSearch' : 'indAvailSearch').value = '';
+    renderAvail(type);
+}
+function clearSelSearch(type) {
+    document.getElementById(type === 'de' ? 'deSelSearch' : 'indSelSearch').value = '';
+    renderSel(type);
+}
+
+// ── Reset all ──────────────────────────────────────────────────────────────
+function resetAll() {
+    selDE.clear(); selInd.clear();
+    ['deAvailSearch','deSelSearch','indAvailSearch','indSelSearch'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    renderAvail('de'); renderSel('de');
+    renderAvail('ind'); renderSel('ind');
+    notify('All selections cleared', 'info');
+}
+
+// ── Export helpers ─────────────────────────────────────────────────────────
+function buildDERows() {
+    const rows = [];
+    selDE.forEach(item => {
+        // Primary dataset row
+        rows.push([item.name, item.uid, item.datasetName, item.datasetUid, item.periodType]);
+        // Extra datasets (if same DE is in multiple datasets)
+        (item.extraDatasets || []).forEach(ed => {
+            rows.push([item.name, item.uid, ed.datasetName, ed.datasetUid, ed.periodType]);
+        });
+    });
+    rows.sort((a,b) => a[0].localeCompare(b[0]));
+    return rows;
+}
+
+function buildIndRows() {
+    const rows = [];
+    selInd.forEach(item => {
+        rows.push([item.name, item.uid, item.type, item.annualized, item.numDesc, item.denDesc, item.numerator, item.denominator]);
+    });
+    rows.sort((a,b) => a[0].localeCompare(b[0]));
+    return rows;
+}
+
+// ── Excel export ───────────────────────────────────────────────────────────
+function exportExcel() {
+    const deRows  = buildDERows();
+    const indRows = buildIndRows();
+    if (!deRows.length && !indRows.length) { notify('No items selected', 'error'); return; }
+
+    const wb = XLSX.utils.book_new();
+
+    if (deRows.length) {
+        const headers = ['Data Element Name', 'Data Element UID', 'Dataset Name', 'Dataset UID', 'Period Type'];
+        const ws = XLSX.utils.aoa_to_sheet([headers, ...deRows]);
+        ws['!cols'] = [{ wch: 55 }, { wch: 14 }, { wch: 45 }, { wch: 14 }, { wch: 14 }];
+        XLSX.utils.book_append_sheet(wb, ws, 'Data Elements');
     }
+    if (indRows.length) {
+        const headers = ['Indicator Name', 'Indicator UID', 'Indicator Type', 'Annualized', 'Numerator Description', 'Denominator Description', 'Numerator Expression', 'Denominator Expression'];
+        const ws = XLSX.utils.aoa_to_sheet([headers, ...indRows]);
+        ws['!cols'] = [{ wch: 55 }, { wch: 14 }, { wch: 25 }, { wch: 12 }, { wch: 35 }, { wch: 35 }, { wch: 50 }, { wch: 50 }];
+        XLSX.utils.book_append_sheet(wb, ws, 'Indicators');
+    }
+
+    const filename = 'dhis2-metadata-' + new Date().toISOString().split('T')[0] + '.xlsx';
+    XLSX.writeFile(wb, filename);
+    notify('Excel downloaded: ' + filename, 'success');
+}
+
+// ── CSV export ─────────────────────────────────────────────────────────────
+function exportCSV() {
+    const deRows  = buildDERows();
+    const indRows = buildIndRows();
+    if (!deRows.length && !indRows.length) { notify('No items selected', 'error'); return; }
+
+    let csv = '';
+
+    if (deRows.length) {
+        csv += 'Data Element Name,Data Element UID,Dataset Name,Dataset UID,Period Type\r\n';
+        deRows.forEach(r => { csv += r.map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(',') + '\r\n'; });
+    }
+
+    if (indRows.length) {
+        if (csv) csv += '\r\n'; // blank line separator
+        csv += 'Indicator Name,Indicator UID,Indicator Type,Annualized,Numerator Description,Denominator Description,Numerator Expression,Denominator Expression\r\n';
+        indRows.forEach(r => { csv += r.map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(',') + '\r\n'; });
+    }
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = 'dhis2-metadata-' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    notify('CSV downloaded', 'success');
+}
 </script>
 </body>
 </html>
