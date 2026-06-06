@@ -329,6 +329,9 @@ let allIndicators   = []; // [{ uid, name, type, annualized, numDesc, denDesc, n
 let selDE  = new Map(); // uid -> object
 let selInd = new Map();
 
+// Tracks which dataset groups are open in the available panel
+const openGroups = new Set();
+
 let currentType = 'de';
 
 // ── Utility ────────────────────────────────────────────────────────────────
@@ -524,16 +527,22 @@ function renderAvail(type) {
         });
 
         byDataset.forEach((group, dsName) => {
-            // Group header
+            const isOpen = openGroups.has(dsName);
+
             const hdr = document.createElement('div');
             hdr.className = 'group-header';
-            hdr.innerHTML = '<span class="group-toggle">▶</span><span class="group-name">' + esc(dsName) + '</span>' +
+            hdr.innerHTML = '<span class="group-toggle">' + (isOpen ? '▼' : '▶') + '</span>' +
+                            '<span class="group-name">' + esc(dsName) + '</span>' +
                             '<span class="group-count">' + group.items.length + '</span>';
+
             const children = document.createElement('div');
-            children.className = 'group-children';
+            children.className = 'group-children' + (isOpen ? ' open' : '');
+
             hdr.onclick = () => {
-                const open = children.classList.toggle('open');
-                hdr.querySelector('.group-toggle').textContent = open ? '▼' : '▶';
+                const nowOpen = children.classList.toggle('open');
+                hdr.querySelector('.group-toggle').textContent = nowOpen ? '▼' : '▶';
+                if (nowOpen) openGroups.add(dsName);
+                else openGroups.delete(dsName);
             };
 
             group.items.forEach(item => {
@@ -650,7 +659,7 @@ function clearSelSearch(type) {
 
 // ── Reset all ──────────────────────────────────────────────────────────────
 function resetAll() {
-    selDE.clear(); selInd.clear();
+    selDE.clear(); selInd.clear(); openGroups.clear();
     ['deAvailSearch','deSelSearch','indAvailSearch','indSelSearch'].forEach(id => {
         document.getElementById(id).value = '';
     });
