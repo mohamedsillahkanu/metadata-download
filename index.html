@@ -74,7 +74,7 @@
         .btn-clear-all:hover { background: #c82333; }
         .panel-body { flex: 1; overflow-y: auto; padding: 8px; max-height: 420px; }
 
-        /* Category group styling */
+        /* Available items — grouped by dataset/type */
         .group-header { background: #004080; color: #fff; padding: 8px 12px; border-radius: 4px; margin: 6px 0 3px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 8px; user-select: none; }
         .group-header:hover { background: #0056b3; }
         .group-toggle { font-size: 10px; }
@@ -177,7 +177,7 @@
             <h3>Informatics Consultancy Firm-Sierra Leone (ICF-SL)</h3>
             <p class="tagline">Driving Data-Driven Solutions for Health and Development</p>
             <h1>DHIS2 METADATA EXPORT TOOL</h1>
-            <p class="subtitle">Parent Data Elements + Child Category Combos = Separate Export Rows</p>
+            <p class="subtitle">Select Data Elements and Indicators, then Export with UIDs to Excel or CSV</p>
         </div>
 
         <div class="content-card">
@@ -223,7 +223,7 @@
                         <!-- Available -->
                         <div class="panel">
                             <div class="panel-header">
-                                <span class="panel-title">Available (Parent + Children)</span>
+                                <span class="panel-title">Available Data Elements</span>
                                 <span class="panel-count" id="deAvailCount">0</span>
                             </div>
                             <div class="panel-search-wrap">
@@ -231,7 +231,7 @@
                                 <button class="clear-search-btn" onclick="clearSearch('de')">&#x2715; Clear</button>
                             </div>
                             <div class="panel-actions">
-                                <button class="panel-action-btn btn-add-all" onclick="addAllVisible('de')">Add All Visible</button>
+                                <button class="panel-action-btn btn-add-all" onclick="addAll('de')">Add All Visible</button>
                             </div>
                             <div class="panel-body" id="deAvailPanel">
                                 <p style="color:#999;text-align:center;padding:20px;font-size:13px;">Click "Load Metadata" to start</p>
@@ -240,7 +240,7 @@
                         <!-- Selected -->
                         <div class="panel">
                             <div class="panel-header">
-                                <span class="panel-title">Selected (Parent + Children as separate rows)</span>
+                                <span class="panel-title">Selected Data Elements</span>
                                 <span class="panel-count" id="deSelCount">0</span>
                             </div>
                             <div class="panel-search-wrap">
@@ -260,21 +260,44 @@
                 <!-- INDICATORS panel pair -->
                 <div id="paneInd" style="display:none;">
                     <div class="dual-panel">
+                        <!-- Available -->
                         <div class="panel">
-                            <div class="panel-header"><span class="panel-title">Available Indicators</span><span class="panel-count" id="indAvailCount">0</span></div>
-                            <div class="panel-search-wrap"><input class="panel-search" id="indAvailSearch" placeholder="Search indicators..." oninput="filterAvail('ind')"><button class="clear-search-btn" onclick="clearSearch('ind')">&#x2715; Clear</button></div>
-                            <div class="panel-actions"><button class="panel-action-btn btn-add-all" onclick="addAllVisible('ind')">Add All Visible</button></div>
-                            <div class="panel-body" id="indAvailPanel"></div>
+                            <div class="panel-header">
+                                <span class="panel-title">Available Indicators</span>
+                                <span class="panel-count" id="indAvailCount">0</span>
+                            </div>
+                            <div class="panel-search-wrap">
+                                <input class="panel-search" id="indAvailSearch" placeholder="Search indicators..." oninput="filterAvail('ind')">
+                                <button class="clear-search-btn" onclick="clearSearch('ind')">&#x2715; Clear</button>
+                            </div>
+                            <div class="panel-actions">
+                                <button class="panel-action-btn btn-add-all" onclick="addAll('ind')">Add All Visible</button>
+                            </div>
+                            <div class="panel-body" id="indAvailPanel">
+                                <p style="color:#999;text-align:center;padding:20px;font-size:13px;">Click "Load Metadata" to start</p>
+                            </div>
                         </div>
+                        <!-- Selected -->
                         <div class="panel">
-                            <div class="panel-header"><span class="panel-title">Selected Indicators</span><span class="panel-count" id="indSelCount">0</span></div>
-                            <div class="panel-search-wrap"><input class="panel-search" id="indSelSearch" placeholder="Search selected..." oninput="filterSel('ind')"><button class="clear-search-btn" onclick="clearSelSearch('ind')">&#x2715; Clear</button></div>
-                            <div class="panel-actions"><button class="panel-action-btn btn-clear-all" onclick="clearAll('ind')">Remove All</button></div>
-                            <div class="panel-body" id="indSelPanel"></div>
+                            <div class="panel-header">
+                                <span class="panel-title">Selected Indicators</span>
+                                <span class="panel-count" id="indSelCount">0</span>
+                            </div>
+                            <div class="panel-search-wrap">
+                                <input class="panel-search" id="indSelSearch" placeholder="Search selected..." oninput="filterSel('ind')">
+                                <button class="clear-search-btn" onclick="clearSelSearch('ind')">&#x2715; Clear</button>
+                            </div>
+                            <div class="panel-actions">
+                                <button class="panel-action-btn btn-clear-all" onclick="clearAll('ind')">Remove All</button>
+                            </div>
+                            <div class="panel-body" id="indSelPanel">
+                                <p style="color:#999;text-align:center;padding:20px;font-size:13px;">No indicators selected</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- EXPORT BUTTONS -->
                 <div class="btn-row">
                     <button class="btn-gold" onclick="exportExcel()">⬇ Download Excel (.xlsx)</button>
                     <button class="btn-secondary" onclick="exportCSV()">⬇ Download CSV</button>
@@ -287,7 +310,7 @@
         <div class="page-footer">
             <div style="font-weight:700;">Informatics Consultancy Firm-Sierra Leone (ICF-SL)</div>
             <div>Driving Data-Driven Solutions for Health and Development</div>
-            <div style="font-size:10px;margin-top:4px;">© 2025 ICF-SL | Parent = 1 row | Each Child Category = Separate row with its own UID</div>
+            <div style="font-size:10px;margin-top:4px;">© 2025 ICF-SL</div>
         </div>
     </div>
 </div>
@@ -298,347 +321,505 @@
 const PROXY = 'https://script.google.com/macros/s/AKfycbyRXc68PYSmDSCYPakAS8Gc9R00kRjmsMYoDujPYMItyquXfwMAJUtRqXLiDlNWbSfDQQ/exec';
 let cfg = null;
 
-// Data structures
-let allDataElements = [];
-let allIndicators = [];
+// Raw data from API
+let allDataElements = []; // [{ uid, name, datasetUid, datasetName, periodType }]
+let allIndicators   = []; // [{ uid, name, type, annualized, numDesc, denDesc, numerator, denominator }]
 
-// Selected items: EACH row (parent OR child) is a separate entry
-// Key: "deUid|parent" for parent, "deUid|catOptId" for child
-let selDE = new Map();
+// Selected sets — keys are UIDs
+let selDE  = new Map(); // uid -> object
 let selInd = new Map();
 
-let currentType = 'de';
-let openGroups = new Set();
+// Tracks which dataset groups are open in the available panel
+const openGroups = new Set();
 
-function notify(msg, type) { const n = document.getElementById('notification'); n.textContent = msg; n.className = 'notification ' + type; setTimeout(() => { n.className = 'notification'; }, 5000); }
-function log(msg, type = 'info') { const box = document.getElementById('logBox'); const d = document.createElement('div'); d.className = 'log-line ' + type; d.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg; box.appendChild(d); box.scrollTop = box.scrollHeight; }
-function setProgress(p) { const f = document.getElementById('progressFill'); f.style.width = p + '%'; f.textContent = p + '%'; }
-function proxyFetch(url) { const auth = 'Basic ' + btoa(cfg.username + ':' + cfg.password); return fetch(PROXY + '?url=' + encodeURIComponent(url) + '&Authorization=' + encodeURIComponent(auth)); }
+let currentType = 'de';
+
+// ── Utility ────────────────────────────────────────────────────────────────
+function notify(msg, type) {
+    const n = document.getElementById('notification');
+    n.textContent = msg;
+    n.className = 'notification ' + type;
+    setTimeout(() => { n.className = 'notification'; }, 5000);
+}
+function log(msg, type = 'info') {
+    const box = document.getElementById('logBox');
+    const d = document.createElement('div');
+    d.className = 'log-line ' + type;
+    d.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+    box.appendChild(d);
+    box.scrollTop = box.scrollHeight;
+}
+function setProgress(p) {
+    const f = document.getElementById('progressFill');
+    f.style.width = p + '%';
+    f.textContent = p + '%';
+}
+function proxyFetch(url) {
+    const auth = 'Basic ' + btoa(cfg.username + ':' + cfg.password);
+    return fetch(PROXY + '?url=' + encodeURIComponent(url) + '&Authorization=' + encodeURIComponent(auth));
+}
 function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+// ── Login ──────────────────────────────────────────────────────────────────
 async function doLogin() {
-    const btn = document.getElementById('loginBtn'); btn.disabled = true; btn.textContent = 'Connecting...';
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true; btn.textContent = 'Connecting...';
     const instanceUrl = document.getElementById('instanceUrl').value.trim().replace(/\/$/, '');
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value.trim();
+    const username    = document.getElementById('username').value.trim();
+    const password    = document.getElementById('password').value.trim();
     cfg = { instanceUrl, username, password };
     try {
         const auth = 'Basic ' + btoa(username + ':' + password);
         const r = await fetch(PROXY + '?url=' + encodeURIComponent(instanceUrl + '/api/me') + '&Authorization=' + encodeURIComponent(auth));
         if (r.ok) {
-            const u = await r.json(); const name = ((u.firstName || '') + ' ' + (u.surname || '')).trim() || 'User';
+            const u = await r.json();
+            const name = ((u.firstName || '') + ' ' + (u.surname || '')).trim() || 'User';
             notify('Connected! Welcome ' + name, 'success');
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainContent').classList.add('active');
-        } else { notify('Auth failed (' + r.status + ')', 'error'); cfg = null; }
+        } else {
+            notify('Auth failed (' + r.status + ')', 'error'); cfg = null;
+        }
     } catch(e) { notify('Connection error: ' + e.message, 'error'); cfg = null; }
     finally { btn.disabled = false; btn.textContent = 'Connect to DHIS2'; }
 }
 
-function switchType(type) { currentType = type; document.getElementById('paneDE').style.display = type === 'de' ? 'block' : 'none'; document.getElementById('paneInd').style.display = type === 'ind' ? 'block' : 'none'; document.getElementById('tabDE').classList.toggle('active', type === 'de'); document.getElementById('tabInd').classList.toggle('active', type === 'ind'); }
+// ── Tab switch ─────────────────────────────────────────────────────────────
+function switchType(type) {
+    currentType = type;
+    document.getElementById('paneDE').style.display  = type === 'de'  ? 'block' : 'none';
+    document.getElementById('paneInd').style.display = type === 'ind' ? 'block' : 'none';
+    document.getElementById('tabDE').classList.toggle('active',  type === 'de');
+    document.getElementById('tabInd').classList.toggle('active', type === 'ind');
+}
 
+// ── Fetch metadata ─────────────────────────────────────────────────────────
 async function fetchMetadata() {
     if (!cfg) { notify('Not connected', 'error'); return; }
-    const btn = document.getElementById('fetchBtn'); btn.disabled = true; btn.textContent = 'Loading...';
+    const btn = document.getElementById('fetchBtn');
+    btn.disabled = true; btn.textContent = 'Loading...';
     document.getElementById('progressWrap').style.display = 'block';
-    document.getElementById('logBox').innerHTML = ''; setProgress(0);
+    document.getElementById('logBox').innerHTML = '';
+    setProgress(0);
     allDataElements = []; allIndicators = [];
 
     try {
-        log('Fetching datasets with data elements and category combos...', 'info'); setProgress(5);
-        const dsResp = await proxyFetch(cfg.instanceUrl + '/api/dataSets.json?fields=id,displayName,name,periodType,dataSetElements[dataElement[id,displayName,name,categoryCombo[id,displayName,categoryOptionCombos[id,displayName]]]]&paging=false');
+        // 1. Datasets + data elements
+        log('Fetching datasets with data elements...', 'info');
+        setProgress(5);
+        const dsResp = await proxyFetch(cfg.instanceUrl + '/api/dataSets.json?fields=id,displayName,name,periodType,dataSetElements[dataElement[id,displayName,name]]&paging=false');
         if (!dsResp.ok) throw new Error('Datasets HTTP ' + dsResp.status);
         const dsData = await dsResp.json();
-        const datasets = dsData.dataSets || []; setProgress(30);
-        
-        const deMap = new Map();
+        const datasets = dsData.dataSets || [];
+        setProgress(30);
+        log('Received ' + datasets.length + ' datasets', 'success');
+
+        // Collect all unique DE UIDs across all datasets
+        const allDeUids = new Set();
         datasets.forEach(ds => {
-            const dsName = ds.displayName || ds.name || ds.id;
-            const periodType = ds.periodType || 'Monthly';
             (ds.dataSetElements || []).forEach(dse => {
-                if (!dse.dataElement) return;
-                const de = dse.dataElement; const uid = de.id;
-                if (!deMap.has(uid)) {
-                    let categoryOpts = [];
-                    if (de.categoryCombo && de.categoryCombo.categoryOptionCombos) {
-                        categoryOpts = de.categoryCombo.categoryOptionCombos.map(opt => ({ 
-                            id: opt.id, 
-                            name: opt.displayName || opt.name 
-                        }));
-                    }
-                    deMap.set(uid, { 
-                        uid, 
-                        name: de.displayName || de.name || uid, 
-                        categoryCombo: de.categoryCombo ? { id: de.categoryCombo.id, name: de.categoryCombo.displayName } : null, 
-                        categoryOptions: categoryOpts, 
-                        datasetMemberships: [] 
-                    });
-                }
-                deMap.get(uid).datasetMemberships.push({ datasetUid: ds.id, datasetName: dsName, periodType: periodType });
+                if (dse.dataElement) allDeUids.add(dse.dataElement.id);
             });
         });
-        allDataElements = Array.from(deMap.values()).sort((a,b) => a.name.localeCompare(b.name));
-        
-        let totalSelectable = 0;
-        allDataElements.forEach(de => {
-            totalSelectable += 1; // parent
-            totalSelectable += de.categoryOptions.length; // children
-        });
-        log(`Loaded ${allDataElements.length} data elements (${totalSelectable} total selectable rows: parents + children)`, 'success'); 
+        log('Found ' + allDeUids.size + ' unique data elements. Fetching category combos...', 'info');
+        setProgress(35);
+
+        // Fetch full DE metadata including categoryCombo in batches of 100
+        const deUidArr = Array.from(allDeUids);
+        const cocMap = new Map(); // deUid -> { categoryComboName, cocs: [{id, name}] }
+        const batchSize = 100;
+        for (let i = 0; i < deUidArr.length; i += batchSize) {
+            const batch = deUidArr.slice(i, i + batchSize).join(',');
+            const deResp = await proxyFetch(cfg.instanceUrl + '/api/dataElements.json?filter=id:in:[' + batch + ']&fields=id,categoryCombo[id,displayName,categoryOptionCombos[id,displayName]]&paging=false');
+            if (deResp.ok) {
+                const deData = await deResp.json();
+                (deData.dataElements || []).forEach(de => {
+                    if (!de.categoryCombo) return;
+                    const cocs = (de.categoryCombo.categoryOptionCombos || [])
+                        .map(c => ({ id: c.id, name: c.displayName || c.id }))
+                        .sort((a, b) => a.name.localeCompare(b.name));
+                    cocMap.set(de.id, { categoryComboName: de.categoryCombo.displayName || '', cocs });
+                });
+            }
+            setProgress(35 + Math.round((i / deUidArr.length) * 15));
+        }
+        log('Category combo data loaded for ' + cocMap.size + ' data elements', 'success');
         setProgress(50);
 
+        // Build one entry per DE+dataset combination (key = deUid|datasetUid)
+        // This lets the user pick exactly which dataset to source each DE from
+        const entries = [];
+        datasets.forEach(ds => {
+            const dsName = ds.displayName || ds.name || ds.id;
+            (ds.dataSetElements || []).forEach(dse => {
+                if (!dse.dataElement) return;
+                const deUid  = dse.dataElement.id;
+                const deName = dse.dataElement.displayName || dse.dataElement.name || deUid;
+                const cocInfo = cocMap.get(deUid) || { categoryComboName: '', cocs: [] };
+                entries.push({
+                    key:              deUid + '|' + ds.id,   // unique per DE+dataset combo
+                    uid:              deUid,
+                    name:             deName,
+                    datasetUid:       ds.id,
+                    datasetName:      dsName,
+                    periodType:       ds.periodType || '',
+                    categoryComboName: cocInfo.categoryComboName,
+                    cocs:             cocInfo.cocs
+                });
+            });
+        });
+        allDataElements = entries.sort((a, b) => {
+            const d = a.datasetName.localeCompare(b.datasetName);
+            return d !== 0 ? d : a.name.localeCompare(b.name);
+        });
+        log('Built ' + allDataElements.length + ' DE+dataset entries', 'success');
+        setProgress(52);
+
+        // 2. Indicator types
+        log('Fetching indicator types...', 'info');
+        const typeMap = {};
+        const itResp = await proxyFetch(cfg.instanceUrl + '/api/indicatorTypes.json?fields=id,displayName,name,factor,number&paging=false');
+        if (itResp.ok) {
+            const itData = await itResp.json();
+            (itData.indicatorTypes || []).forEach(it => {
+                typeMap[it.id] = it.number ? 'Number' : ((it.displayName || it.name) + ' (×' + (it.factor || 1) + ')');
+            });
+        }
+        setProgress(65);
+
+        // 3. Indicators
         log('Fetching indicators...', 'info');
-        const indResp = await proxyFetch(cfg.instanceUrl + '/api/indicators.json?fields=id,displayName,name,annualized,numerator,denominator,numeratorDescription,denominatorDescription&paging=false');
+        const indResp = await proxyFetch(cfg.instanceUrl + '/api/indicators.json?fields=id,displayName,name,annualized,indicatorType[id],numerator,denominator,numeratorDescription,denominatorDescription&paging=false');
         if (!indResp.ok) throw new Error('Indicators HTTP ' + indResp.status);
         const indData = await indResp.json();
-        allIndicators = (indData.indicators || []).map(ind => ({ uid: ind.id, name: ind.displayName || ind.name || ind.id, annualized: ind.annualized ? 'Yes' : 'No', numerator: ind.numerator || '', denominator: ind.denominator || '', numDesc: ind.numeratorDescription || '', denDesc: ind.denominatorDescription || '' })).sort((a,b) => a.name.localeCompare(b.name));
+        const rawInds = indData.indicators || [];
+        setProgress(85);
+        log('Received ' + rawInds.length + ' indicators', 'success');
 
-        document.getElementById('badgeDE').textContent = allDataElements.length;
+        allIndicators = rawInds.map(ind => ({
+            uid:         ind.id,
+            name:        ind.displayName || ind.name || ind.id,
+            type:        (ind.indicatorType && typeMap[ind.indicatorType.id]) ? typeMap[ind.indicatorType.id] : '',
+            annualized:  ind.annualized ? 'Yes' : 'No',
+            numDesc:     ind.numeratorDescription   || '',
+            denDesc:     ind.denominatorDescription || '',
+            numerator:   ind.numerator   || '',
+            denominator: ind.denominator || ''
+        })).sort((a,b) => a.name.localeCompare(b.name));
+
+        const uniqueDeCount = new Set(allDataElements.map(e => e.uid)).size;
+        document.getElementById('badgeDE').textContent  = uniqueDeCount;
         document.getElementById('badgeInd').textContent = allIndicators.length;
-        document.getElementById('loadStatus').textContent = allDataElements.length + ' data elements · ' + allIndicators.length + ' indicators';
-        renderAvail('de'); renderAvail('ind'); setProgress(100);
-        log('READY: Parent = 1 row | Each Child Category = Separate row with its own UID', 'success');
-        notify('Metadata loaded! Parents and children are separate selectable rows', 'success');
-    } catch(e) { log('ERROR: ' + e.message, 'error'); notify('Failed: ' + e.message, 'error'); }
-    finally { btn.disabled = false; btn.textContent = 'Load Metadata'; }
+        document.getElementById('loadStatus').textContent =
+            uniqueDeCount + ' data elements (' + allDataElements.length + ' DE+dataset entries) · ' + allIndicators.length + ' indicators loaded';
+
+        renderAvail('de');
+        renderAvail('ind');
+        setProgress(100);
+        log('Done — select variables and export below.', 'success');
+        notify('Loaded: ' + allDataElements.length + ' data elements · ' + allIndicators.length + ' indicators', 'success');
+
+    } catch(e) {
+        log('ERROR: ' + e.message, 'error');
+        notify('Failed: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false; btn.textContent = 'Reload Metadata';
+    }
 }
 
-function pickDatasetForDE(de, callback) {
-    if (de.datasetMemberships.length === 1) { callback(de.datasetMemberships[0]); return; }
-    let msg = 'This data element belongs to multiple datasets.\nSelect which dataset to use (priority to avoid double counting):\n\n';
-    de.datasetMemberships.forEach((m, idx) => { msg += `${idx+1}. ${m.datasetName} (${m.periodType})\n`; });
-    msg += '\nEnter number (1-' + de.datasetMemberships.length + '):';
-    const choice = prompt(msg);
-    const idx = parseInt(choice) - 1;
-    if (!isNaN(idx) && idx >= 0 && idx < de.datasetMemberships.length) callback(de.datasetMemberships[idx]);
-    else { notify('Invalid selection, item not added', 'error'); callback(null); }
-}
-
-// Add PARENT (1 row per data element)
-function addParent(deUid) {
-    const de = allDataElements.find(d => d.uid === deUid);
-    if (!de) return;
-    pickDatasetForDE(de, (selectedDataset) => {
-        if (!selectedDataset) return;
-        const key = `${deUid}|parent`;
-        if (selDE.has(key)) { notify('Parent already selected', 'info'); return; }
-        selDE.set(key, { 
-            displayName: de.name,
-            realUid: de.uid,
-            type: 'Parent',
-            deUid: deUid,
-            selectedDataset: selectedDataset.datasetName, 
-            selectedDatasetUid: selectedDataset.datasetUid, 
-            periodType: selectedDataset.periodType 
-        });
-        renderAvail('de'); renderSel('de');
-        notify(`Added PARENT: ${de.name} | UID: ${de.uid}`, 'success');
-    });
-}
-
-// Add CHILD (one row per category option)
-function addChild(deUid, catOptId, catOptName) {
-    const de = allDataElements.find(d => d.uid === deUid);
-    if (!de) return;
-    pickDatasetForDE(de, (selectedDataset) => {
-        if (!selectedDataset) return;
-        const key = `${deUid}|child|${catOptId}`;
-        if (selDE.has(key)) { notify('Child already selected', 'info'); return; }
-        selDE.set(key, { 
-            displayName: `${de.name} - ${catOptName}`,
-            realUid: catOptId,
-            type: 'Child',
-            deUid: deUid,
-            catOptId: catOptId,
-            catOptName: catOptName,
-            selectedDataset: selectedDataset.datasetName, 
-            selectedDatasetUid: selectedDataset.datasetUid, 
-            periodType: selectedDataset.periodType 
-        });
-        renderAvail('de'); renderSel('de');
-        notify(`Added CHILD: ${de.name} - ${catOptName} | UID: ${catOptId}`, 'success');
-    });
-}
-
+// ── Render available panel ─────────────────────────────────────────────────
 function renderAvail(type) {
-    if (type === 'de') {
-        const search = document.getElementById('deAvailSearch').value.toLowerCase();
-        const panel = document.getElementById('deAvailPanel');
-        
-        const filteredDEs = allDataElements.filter(de => !search || de.name.toLowerCase().includes(search));
-        
-        let totalAvailable = 0;
-        filteredDEs.forEach(de => {
-            if (!selDE.has(`${de.uid}|parent`)) totalAvailable++;
-            totalAvailable += de.categoryOptions.filter(opt => !selDE.has(`${de.uid}|child|${opt.id}`)).length;
-        });
-        document.getElementById('deAvailCount').textContent = totalAvailable;
-        
-        if (filteredDEs.length === 0) { 
-            panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;">No available items</p>'; 
-            return; 
+    const search   = document.getElementById(type === 'de' ? 'deAvailSearch' : 'indAvailSearch').value.toLowerCase();
+    const panel    = document.getElementById(type === 'de' ? 'deAvailPanel'  : 'indAvailPanel');
+    const selMap   = type === 'de' ? selDE : selInd;
+    const allItems = type === 'de' ? allDataElements : allIndicators;
+
+    // UIDs already claimed by a selection (regardless of which dataset)
+    const selectedDeUids = new Set(Array.from(selDE.values()).map(i => i.uid));
+
+    // Filter out already selected and apply search
+    const visible = allItems.filter(item => {
+        if (type === 'de') {
+            if (selectedDeUids.has(item.uid)) return false; // hide all dataset copies once one is selected
+        } else {
+            if (selMap.has(item.uid)) return false;
         }
-        
-        const frag = document.createDocumentFragment();
-        filteredDEs.forEach(de => {
-            const hasChildren = de.categoryOptions && de.categoryOptions.length > 0;
-            const isOpen = openGroups.has(de.uid);
-            
-            const hdr = document.createElement('div'); 
-            hdr.className = 'group-header'; 
-            hdr.innerHTML = '<span class="group-toggle">' + (isOpen ? '▼' : '▶') + '</span><span class="group-name">' + esc(de.name) + '</span><span class="group-count">Parent + ' + de.categoryOptions.length + ' children</span>';
-            const childrenDiv = document.createElement('div'); 
-            childrenDiv.className = 'group-children' + (isOpen ? ' open' : '');
-            hdr.onclick = () => { childrenDiv.classList.toggle('open'); hdr.querySelector('.group-toggle').textContent = childrenDiv.classList.contains('open') ? '▼' : '▶'; if (childrenDiv.classList.contains('open')) openGroups.add(de.uid); else openGroups.delete(de.uid); };
-            
-            // PARENT row (if not selected)
-            if (!selDE.has(`${de.uid}|parent`)) {
-                const parentDiv = document.createElement('div'); 
-                parentDiv.className = 'avail-item';
-                parentDiv.style.background = '#e8f0fe';
-                parentDiv.style.borderLeft = '4px solid #004080';
-                parentDiv.innerHTML = '<span class="avail-item-name"><strong>📌 PARENT:</strong> ' + esc(de.name) + '</span><span class="avail-item-uid">' + de.uid + '</span><button class="add-btn" onclick="addParent(\'' + de.uid + '\')">+ Add Parent</button>';
-                childrenDiv.appendChild(parentDiv);
-            }
-            
-            // CHILD rows (one per category option)
-            de.categoryOptions.forEach(opt => {
-                if (!selDE.has(`${de.uid}|child|${opt.id}`)) {
-                    const childDiv = document.createElement('div'); 
-                    childDiv.className = 'avail-item';
-                    childDiv.style.borderLeft = '4px solid #ffc107';
-                    childDiv.innerHTML = '<span class="avail-item-name"><strong>🔹 CHILD:</strong> ' + esc(de.name) + ' - ' + esc(opt.name) + '</span><span class="avail-item-uid">' + opt.id + '</span><button class="add-btn" onclick="addChild(\'' + de.uid + '\',\'' + opt.id + '\',\'' + esc(opt.name) + '\')">+ Add Child</button>';
-                    childrenDiv.appendChild(childDiv);
-                }
+        if (search && !item.name.toLowerCase().includes(search)) return false;
+        return true;
+    });
+
+    document.getElementById(type === 'de' ? 'deAvailCount' : 'indAvailCount').textContent = visible.length;
+
+    if (visible.length === 0) {
+        panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;font-size:13px;">' +
+            (allItems.length === 0 ? 'Click "Load Metadata" to start' : 'All items selected or no match') + '</p>';
+        return;
+    }
+
+    const frag = document.createDocumentFragment();
+
+    if (type === 'de') {
+        // Group by dataset
+        const byDataset = new Map();
+        visible.forEach(item => {
+            const key = item.datasetName;
+            if (!byDataset.has(key)) byDataset.set(key, { dsUid: item.datasetUid, items: [] });
+            byDataset.get(key).items.push(item);
+        });
+
+        byDataset.forEach((group, dsName) => {
+            const isOpen = openGroups.has(dsName);
+
+            const hdr = document.createElement('div');
+            hdr.className = 'group-header';
+            hdr.innerHTML = '<span class="group-toggle">' + (isOpen ? '▼' : '▶') + '</span>' +
+                            '<span class="group-name">' + esc(dsName) + '</span>' +
+                            '<span class="group-count">' + group.items.length + '</span>';
+
+            const children = document.createElement('div');
+            children.className = 'group-children' + (isOpen ? ' open' : '');
+
+            hdr.onclick = () => {
+                const nowOpen = children.classList.toggle('open');
+                hdr.querySelector('.group-toggle').textContent = nowOpen ? '▼' : '▶';
+                if (nowOpen) openGroups.add(dsName);
+                else openGroups.delete(dsName);
+            };
+
+            group.items.forEach(item => {
+                children.appendChild(makeAvailItem(item, type));
             });
-            
-            if (childrenDiv.children.length > 0) {
-                frag.appendChild(hdr);
-                frag.appendChild(childrenDiv);
-            }
+            frag.appendChild(hdr);
+            frag.appendChild(children);
         });
-        panel.innerHTML = ''; 
-        panel.appendChild(frag);
     } else {
-        const search = document.getElementById('indAvailSearch').value.toLowerCase();
-        const panel = document.getElementById('indAvailPanel');
-        const filtered = allIndicators.filter(ind => !selInd.has(ind.uid) && (!search || ind.name.toLowerCase().includes(search)));
-        document.getElementById('indAvailCount').textContent = filtered.length;
-        panel.innerHTML = filtered.map(ind => `<div class="avail-item"><span class="avail-item-name">${esc(ind.name)}</span><span class="avail-item-uid">${ind.uid}</span><button class="add-btn" onclick="addIndicator('${ind.uid}')">+ Add</button></div>`).join('');
+        // Indicators: flat list (could group by type if needed)
+        visible.forEach(item => frag.appendChild(makeAvailItem(item, type)));
     }
+
+    panel.innerHTML = '';
+    panel.appendChild(frag);
 }
 
-window.addParent = addParent;
-window.addChild = addChild;
-window.addIndicator = function(uid) { const ind = allIndicators.find(i => i.uid === uid); if (ind && !selInd.has(uid)) { selInd.set(uid, ind); renderAvail('ind'); renderSel('ind'); } };
+function makeAvailItem(item, type) {
+    const div = document.createElement('div');
+    div.className = 'avail-item';
+    const selKey = type === 'de' ? item.key : item.uid;
+    div.dataset.key = selKey;
+    const cocHint = (type === 'de' && item.categoryComboName && item.categoryComboName.toLowerCase() !== 'default')
+        ? '<span style="font-size:10px;color:#0056b3;margin-left:6px;font-style:italic;">[' + esc(item.categoryComboName) + ' · ' + item.cocs.length + ' combos]</span>'
+        : '';
+    div.innerHTML =
+        '<span class="avail-item-name">' + esc(item.name) + cocHint + '</span>' +
+        '<span class="avail-item-uid">' + item.uid + '</span>' +
+        '<button class="add-btn" onclick="addItem(\'' + type + '\',\'' + selKey + '\')">+ Add</button>';
+    div.ondblclick = () => addItem(type, selKey);
+    return div;
+}
 
+// ── Render selected panel ──────────────────────────────────────────────────
 function renderSel(type) {
-    if (type === 'de') {
-        const search = document.getElementById('deSelSearch').value.toLowerCase();
-        const panel = document.getElementById('deSelPanel');
-        let items = Array.from(selDE.values()).filter(item => !search || item.displayName.toLowerCase().includes(search));
-        document.getElementById('deSelCount').textContent = items.length;
-        if (items.length === 0) {
-            panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;">No items selected</p>';
-            return;
-        }
-        panel.innerHTML = items.map(item => `<div class="sel-item" style="${item.type === 'Parent' ? 'border-left-color: #004080;' : 'border-left-color: #ffc107;'}"><div class="sel-item-info"><span class="sel-item-name">${item.type === 'Parent' ? '📌' : '🔹'} ${esc(item.displayName)}</span><span class="sel-item-meta">UID: ${item.realUid} | Type: ${item.type} | Dataset: ${esc(item.selectedDataset)}</span></div><button class="remove-btn" onclick="removeDEItem('${item.deUid}','${item.type === 'Parent' ? 'parent' : 'child|' + item.catOptId}')">×</button></div>`).join('');
-    } else {
-        const search = document.getElementById('indSelSearch').value.toLowerCase();
-        const panel = document.getElementById('indSelPanel');
-        let items = Array.from(selInd.values()).filter(item => !search || item.name.toLowerCase().includes(search));
-        document.getElementById('indSelCount').textContent = items.length;
-        panel.innerHTML = items.map(item => `<div class="sel-item"><div class="sel-item-info"><span class="sel-item-name">${esc(item.name)}</span><span class="sel-item-meta">${item.uid}</span></div><button class="remove-btn" onclick="removeIndicator('${item.uid}')">×</button></div>`).join('');
+    const search = document.getElementById(type === 'de' ? 'deSelSearch' : 'indSelSearch').value.toLowerCase();
+    const panel  = document.getElementById(type === 'de' ? 'deSelPanel'  : 'indSelPanel');
+    const selMap = type === 'de' ? selDE : selInd;
+
+    document.getElementById(type === 'de' ? 'deSelCount' : 'indSelCount').textContent = selMap.size;
+
+    if (selMap.size === 0) {
+        panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;font-size:13px;">No items selected</p>';
+        return;
     }
+
+    const items = Array.from(selMap.values())
+        .filter(item => !search || item.name.toLowerCase().includes(search))
+        .sort((a,b) => {
+            if (type === 'de') {
+                const d = a.datasetName.localeCompare(b.datasetName);
+                return d !== 0 ? d : a.name.localeCompare(b.name);
+            }
+            return a.name.localeCompare(b.name);
+        });
+
+    const frag = document.createDocumentFragment();
+    items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'sel-item';
+        const selKey = type === 'de' ? item.key : item.uid;
+        div.dataset.key = selKey;
+
+        let meta = '';
+        if (type === 'de') {
+            meta = item.datasetName + ' · ' + item.uid;
+            if (item.categoryComboName && item.categoryComboName.toLowerCase() !== 'default') {
+                meta += ' · ' + item.categoryComboName + ' (' + item.cocs.length + ' combos)';
+            }
+        } else {
+            meta = item.type + ' · ' + item.uid;
+        }
+
+        div.innerHTML =
+            '<span class="sel-item-info">' +
+                '<span class="sel-item-name">' + esc(item.name) + '</span>' +
+                '<span class="sel-item-meta">' + esc(meta) + '</span>' +
+            '</span>' +
+            '<button class="remove-btn" onclick="removeItem(\'' + type + '\',\'' + selKey + '\')" title="Remove">×</button>';
+        frag.appendChild(div);
+    });
+
+    panel.innerHTML = '';
+    panel.appendChild(frag);
 }
 
-window.removeDEItem = function(deUid, key) { selDE.delete(`${deUid}|${key}`); renderAvail('de'); renderSel('de'); };
-window.removeIndicator = function(uid) { selInd.delete(uid); renderAvail('ind'); renderSel('ind'); };
-
-function addAllVisible(type) { 
-    if (type === 'de') { 
-        const search = document.getElementById('deAvailSearch').value.toLowerCase(); 
-        allDataElements.forEach(de => { 
-            if (!search || de.name.toLowerCase().includes(search)) { 
-                if (!selDE.has(`${de.uid}|parent`)) addParent(de.uid);
-                de.categoryOptions.forEach(opt => { 
-                    if (!selDE.has(`${de.uid}|child|${opt.id}`)) addChild(de.uid, opt.id, opt.name); 
-                });
-            } 
-        }); 
-    } else { 
-        const search = document.getElementById('indAvailSearch').value.toLowerCase(); 
-        allIndicators.forEach(ind => { if ((!search || ind.name.toLowerCase().includes(search)) && !selInd.has(ind.uid)) selInd.set(ind.uid, ind); }); 
-        renderAvail('ind'); renderSel('ind'); 
-    } 
+// ── Add / Remove ───────────────────────────────────────────────────────────
+function addItem(type, key) {
+    const all    = type === 'de' ? allDataElements : allIndicators;
+    const selMap = type === 'de' ? selDE : selInd;
+    const item   = type === 'de' ? all.find(i => i.key === key) : all.find(i => i.uid === key);
+    if (!item || selMap.has(key)) return;
+    selMap.set(key, item);
+    renderAvail(type);
+    renderSel(type);
 }
 
-function clearAll(type) { if (type === 'de') { selDE.clear(); renderAvail('de'); renderSel('de'); } else { selInd.clear(); renderAvail('ind'); renderSel('ind'); } }
+function removeItem(type, key) {
+    const selMap = type === 'de' ? selDE : selInd;
+    selMap.delete(key);
+    renderAvail(type);
+    renderSel(type);
+}
+
+function addAll(type) {
+    const search   = document.getElementById(type === 'de' ? 'deAvailSearch' : 'indAvailSearch').value.toLowerCase();
+    const all      = type === 'de' ? allDataElements : allIndicators;
+    const selMap   = type === 'de' ? selDE : selInd;
+    all.filter(item => {
+        const k = type === 'de' ? item.key : item.uid;
+        return !selMap.has(k) && (!search || item.name.toLowerCase().includes(search));
+    }).forEach(item => {
+        const k = type === 'de' ? item.key : item.uid;
+        selMap.set(k, item);
+    });
+    renderAvail(type);
+    renderSel(type);
+}
+
+function clearAll(type) {
+    const selMap = type === 'de' ? selDE : selInd;
+    selMap.clear();
+    renderAvail(type);
+    renderSel(type);
+}
+
+// ── Search / filter ────────────────────────────────────────────────────────
 function filterAvail(type) { renderAvail(type); }
-function filterSel(type) { renderSel(type); }
-function clearSearch(type) { document.getElementById(type === 'de' ? 'deAvailSearch' : 'indAvailSearch').value = ''; renderAvail(type); }
-function clearSelSearch(type) { document.getElementById(type === 'de' ? 'deSelSearch' : 'indSelSearch').value = ''; renderSel(type); }
-function resetAll() { selDE.clear(); selInd.clear(); openGroups.clear(); document.querySelectorAll('.panel-search').forEach(s => s.value = ''); renderAvail('de'); renderSel('de'); renderAvail('ind'); renderSel('ind'); notify('All selections cleared', 'info'); }
-
-function buildDERows() { 
-    const rows = []; 
-    selDE.forEach(item => { 
-        rows.push([item.displayName, item.realUid, item.type, item.selectedDataset, item.selectedDatasetUid, item.periodType]); 
-    }); 
-    rows.sort((a,b) => a[0].localeCompare(b[0])); 
-    return rows; 
+function filterSel(type)   { renderSel(type);   }
+function clearSearch(type) {
+    document.getElementById(type === 'de' ? 'deAvailSearch' : 'indAvailSearch').value = '';
+    renderAvail(type);
+}
+function clearSelSearch(type) {
+    document.getElementById(type === 'de' ? 'deSelSearch' : 'indSelSearch').value = '';
+    renderSel(type);
 }
 
-function buildIndRows() { 
-    const rows = []; 
-    selInd.forEach(item => { 
-        rows.push([item.name, item.uid, item.annualized, item.numDesc, item.denDesc, item.numerator, item.denominator]); 
-    }); 
-    rows.sort((a,b) => a[0].localeCompare(b[0])); 
-    return rows; 
+// ── Reset all ──────────────────────────────────────────────────────────────
+function resetAll() {
+    selDE.clear(); selInd.clear(); openGroups.clear();
+    ['deAvailSearch','deSelSearch','indAvailSearch','indSelSearch'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    renderAvail('de'); renderSel('de');
+    renderAvail('ind'); renderSel('ind');
+    notify('All selections cleared', 'info');
 }
 
-function exportExcel() { 
-    const deRows = buildDERows(), indRows = buildIndRows(); 
-    if (!deRows.length && !indRows.length) { notify('No items selected', 'error'); return; } 
-    const wb = XLSX.utils.book_new(); 
-    if (deRows.length) { 
-        const headers = ['Data Element Name', 'UID', 'Type (Parent/Child)', 'Dataset Name', 'Dataset UID', 'Period Type']; 
-        const ws = XLSX.utils.aoa_to_sheet([headers, ...deRows]); 
-        ws['!cols'] = [{ wch: 55 }, { wch: 18 }, { wch: 15 }, { wch: 45 }, { wch: 14 }, { wch: 14 }]; 
-        XLSX.utils.book_append_sheet(wb, ws, 'Data Elements'); 
-    } 
-    if (indRows.length) { 
-        const headers = ['Indicator Name', 'Indicator UID', 'Annualized', 'Num Description', 'Den Description', 'Numerator', 'Denominator']; 
-        const ws = XLSX.utils.aoa_to_sheet([headers, ...indRows]); 
-        ws['!cols'] = [{ wch: 55 }, { wch: 14 }, { wch: 12 }, { wch: 35 }, { wch: 35 }, { wch: 50 }, { wch: 50 }]; 
-        XLSX.utils.book_append_sheet(wb, ws, 'Indicators'); 
-    } 
-    XLSX.writeFile(wb, 'dhis2-metadata-' + new Date().toISOString().split('T')[0] + '.xlsx'); 
-    notify('Excel exported: Parent = 1 row, Each Child = separate row!', 'success'); 
+// ── Export helpers ─────────────────────────────────────────────────────────
+// DE export: one parent row per DE, then one child row per category option combo
+// Columns: Row Type | Data Element Name | Data Element UID | COC Name | COC UID | Dataset Name | Dataset UID | Period Type | Category Combo
+function buildDERows() {
+    const rows = [];
+    // Sort by dataset then DE name
+    const sorted = Array.from(selDE.values()).sort((a, b) => {
+        const d = a.datasetName.localeCompare(b.datasetName);
+        return d !== 0 ? d : a.name.localeCompare(b.name);
+    });
+    sorted.forEach(item => {
+        // Parent row — DE UID in UID column, COC columns empty
+        rows.push(['Data Element', item.name, item.uid, '', '', item.datasetName, item.datasetUid, item.periodType, item.categoryComboName]);
+        // Child rows — COC name and COC UID in their own columns, DE UID column empty
+        if (item.cocs && item.cocs.length > 0) {
+            const isDefault = item.cocs.length === 1 && item.cocs[0].name.toLowerCase() === 'default';
+            item.cocs.forEach(coc => {
+                const childName = isDefault ? item.name : (item.name + ' (' + coc.name + ')');
+                rows.push(['Category Option Combo', childName, '', coc.name, coc.id, item.datasetName, item.datasetUid, item.periodType, item.categoryComboName]);
+            });
+        }
+    });
+    return rows;
 }
 
-function exportCSV() { 
-    const deRows = buildDERows(), indRows = buildIndRows(); 
-    if (!deRows.length && !indRows.length) { notify('No items selected', 'error'); return; } 
-    let csv = ''; 
-    if (deRows.length) { 
-        csv += 'Data Element Name,UID,Type (Parent/Child),Dataset Name,Dataset UID,Period Type\r\n'; 
-        deRows.forEach(r => { csv += r.map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(',') + '\r\n'; }); 
-    } 
-    if (indRows.length) { 
-        if (csv) csv += '\r\n'; 
-        csv += 'Indicator Name,Indicator UID,Annualized,Numerator Description,Denominator Description,Numerator Expression,Denominator Expression\r\n'; 
-        indRows.forEach(r => { csv += r.map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(',') + '\r\n'; }); 
-    } 
-    const blob = new Blob([csv], { type: 'text/csv' }); 
-    const url = URL.createObjectURL(blob); 
-    const a = document.createElement('a'); 
-    a.href = url; 
-    a.download = 'dhis2-metadata-' + new Date().toISOString().split('T')[0] + '.csv'; 
-    a.click(); 
-    URL.revokeObjectURL(url); 
-    notify('CSV exported: Parent = 1 row, Each Child = separate row!', 'success'); 
+function buildIndRows() {
+    const rows = [];
+    selInd.forEach(item => {
+        rows.push([item.name, item.uid, item.type, item.annualized, item.numDesc, item.denDesc, item.numerator, item.denominator]);
+    });
+    rows.sort((a,b) => a[0].localeCompare(b[0]));
+    return rows;
+}
+
+// ── Excel export ───────────────────────────────────────────────────────────
+function exportExcel() {
+    const deRows  = buildDERows();
+    const indRows = buildIndRows();
+    if (!deRows.length && !indRows.length) { notify('No items selected', 'error'); return; }
+
+    const wb = XLSX.utils.book_new();
+
+    if (deRows.length) {
+        const headers = ['Row Type', 'Data Element Name', 'Data Element UID', 'Category Option Combo', 'COC UID', 'Dataset Name', 'Dataset UID', 'Period Type', 'Category Combo'];
+        const ws = XLSX.utils.aoa_to_sheet([headers, ...deRows]);
+        ws['!cols'] = [{ wch: 22 }, { wch: 55 }, { wch: 14 }, { wch: 40 }, { wch: 14 }, { wch: 40 }, { wch: 14 }, { wch: 14 }, { wch: 25 }];
+        XLSX.utils.book_append_sheet(wb, ws, 'Data Elements');
+    }
+    if (indRows.length) {
+        const headers = ['Indicator Name', 'Indicator UID', 'Indicator Type', 'Annualized', 'Numerator Description', 'Denominator Description', 'Numerator Expression', 'Denominator Expression'];
+        const ws = XLSX.utils.aoa_to_sheet([headers, ...indRows]);
+        ws['!cols'] = [{ wch: 55 }, { wch: 14 }, { wch: 25 }, { wch: 12 }, { wch: 35 }, { wch: 35 }, { wch: 50 }, { wch: 50 }];
+        XLSX.utils.book_append_sheet(wb, ws, 'Indicators');
+    }
+
+    const filename = 'dhis2-metadata-' + new Date().toISOString().split('T')[0] + '.xlsx';
+    XLSX.writeFile(wb, filename);
+    notify('Excel downloaded: ' + filename, 'success');
+}
+
+// ── CSV export ─────────────────────────────────────────────────────────────
+function exportCSV() {
+    const deRows  = buildDERows();
+    const indRows = buildIndRows();
+    if (!deRows.length && !indRows.length) { notify('No items selected', 'error'); return; }
+
+    let csv = '';
+
+    if (deRows.length) {
+        csv += 'Row Type,Data Element Name,Data Element UID,Category Option Combo,COC UID,Dataset Name,Dataset UID,Period Type,Category Combo\r\n';
+        deRows.forEach(r => { csv += r.map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(',') + '\r\n'; });
+    }
+
+    if (indRows.length) {
+        if (csv) csv += '\r\n'; // blank line separator
+        csv += 'Indicator Name,Indicator UID,Indicator Type,Annualized,Numerator Description,Denominator Description,Numerator Expression,Denominator Expression\r\n';
+        indRows.forEach(r => { csv += r.map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(',') + '\r\n'; });
+    }
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = 'dhis2-metadata-' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    notify('CSV downloaded', 'success');
 }
 </script>
 </body>
