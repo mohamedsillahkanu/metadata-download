@@ -44,17 +44,13 @@
         .content-card { border: 4px double #004080; border-top: none; border-radius: 0 0 12px 12px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
         .content-inner { padding: 28px; }
 
-        .section-header { background: #004080; color: #fff; padding: 13px 18px; border-radius: 6px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .section-header { background: #004080; color: #fff; padding: 13px 18px; border-radius: 6px; display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
         .section-icon { background: #fff; color: #004080; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
         .section-title { font-size: 15px; font-weight: 700; letter-spacing: 0.5px; }
+        .section-subtitle { font-size: 11px; opacity: 0.85; margin-left: auto; }
 
-        /* TYPE TABS */
-        .type-tabs { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
-        .type-tab { padding: 9px 22px; background: #fff; color: #004080; border: 2px solid #004080; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
-        .type-tab:hover:not(.active) { background: #e7f3ff; }
-        .type-tab.active { background: #004080; color: #fff; }
-        .type-tab .badge { display: inline-block; background: #ffc107; color: #000; border-radius: 10px; padding: 1px 8px; font-size: 11px; margin-left: 6px; }
-        .type-tab.active .badge { background: #fff; color: #004080; }
+        /* STEP DIVIDER */
+        .step-divider { border: none; border-top: 2px dashed #cce0ff; margin: 28px 0; }
 
         /* DUAL PANEL */
         .dual-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -66,59 +62,83 @@
         .panel-search { width: 100%; padding: 9px 70px 9px 12px; border: none; border-bottom: 2px solid #004080; font-family: 'Oswald', Arial, sans-serif; font-size: 13px; background: #fff; }
         .panel-search:focus { outline: none; background: #e7f3ff; }
         .clear-search-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #dc3545; color: #fff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Oswald', Arial, sans-serif; }
-        .panel-actions { display: flex; gap: 0; flex-shrink: 0; }
+        .panel-actions { display: flex; flex-shrink: 0; }
         .panel-action-btn { flex: 1; padding: 8px; border: none; font-family: 'Oswald', Arial, sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; transition: background 0.2s; text-transform: uppercase; }
         .btn-add-all { background: #28a745; color: #fff; }
         .btn-add-all:hover { background: #218838; }
         .btn-clear-all { background: #dc3545; color: #fff; }
         .btn-clear-all:hover { background: #c82333; }
-        .panel-body { flex: 1; overflow-y: auto; padding: 8px; max-height: 420px; }
+        .panel-body { flex: 1; overflow-y: auto; padding: 8px; max-height: 380px; }
 
-        /* Available items — grouped by dataset/type */
+        /* Dataset list items (step 1) */
+        .ds-item { padding: 8px 12px; margin: 3px 0; background: #fff; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .ds-item:hover { border-color: #004080; background: #e7f3ff; }
+        .ds-item-name { flex: 1; }
+        .ds-item-period { font-size: 10px; color: #888; background: #f0f0f0; padding: 1px 6px; border-radius: 3px; }
+        .add-btn { background: #28a745; color: #fff; border: none; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Oswald', Arial, sans-serif; white-space: nowrap; }
+        .add-btn:hover { background: #218838; }
+
+        /* Selected dataset items */
+        .sel-ds-item { padding: 8px 12px; margin: 3px 0; background: #d4edda; border: 1px solid #28a745; border-radius: 4px; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+        .sel-ds-name { flex: 1; font-weight: 600; }
+        .sel-ds-uid { font-size: 10px; color: #555; font-family: 'Courier New', monospace; }
+
+        /* Data element available items - grouped */
         .group-header { background: #004080; color: #fff; padding: 8px 12px; border-radius: 4px; margin: 6px 0 3px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 8px; user-select: none; }
         .group-header:hover { background: #0056b3; }
-        .group-toggle { font-size: 10px; }
+        .group-toggle { font-size: 10px; width: 12px; }
         .group-name { flex: 1; }
         .group-count { background: #ffc107; color: #000; padding: 1px 7px; border-radius: 10px; font-size: 11px; }
         .group-children { display: none; margin-left: 12px; border-left: 2px solid #ddd; padding-left: 8px; margin-bottom: 4px; }
         .group-children.open { display: block; }
 
-        .avail-item { padding: 7px 10px; margin: 2px 0; background: #fff; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; transition: border-color 0.15s; }
+        .avail-item { padding: 7px 10px; margin: 2px 0; background: #fff; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         .avail-item:hover { border-color: #004080; background: #e7f3ff; }
-        .avail-item-name { flex: 1; }
-        .avail-item-uid { font-family: 'Courier New', monospace; font-size: 10px; color: #888; }
-        .add-btn { background: #28a745; color: #fff; border: none; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Oswald', Arial, sans-serif; white-space: nowrap; }
-        .add-btn:hover { background: #218838; }
+        .avail-item-name { flex: 1; line-height: 1.3; }
+        .avail-item-uid { font-family: 'Courier New', monospace; font-size: 10px; color: #888; white-space: nowrap; }
 
-        /* Selected items */
+        /* Selected DE / indicator items */
         .sel-item { padding: 8px 10px; margin: 3px 0; background: #d4edda; border: 1px solid #28a745; border-radius: 4px; font-size: 12px; display: flex; align-items: center; gap: 8px; }
         .sel-item-info { flex: 1; }
-        .sel-item-name { display: block; font-weight: 600; }
+        .sel-item-name { display: block; font-weight: 600; line-height: 1.3; }
         .sel-item-meta { display: block; font-size: 10px; color: #555; font-family: 'Courier New', monospace; margin-top: 2px; }
         .remove-btn { background: #dc3545; color: #fff; border: none; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-size: 14px; line-height: 1; flex-shrink: 0; }
         .remove-btn:hover { background: #c82333; }
+
+        /* TYPE TABS (DE / Indicators in step 3) */
+        .type-tabs { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+        .type-tab { padding: 9px 22px; background: #fff; color: #004080; border: 2px solid #004080; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
+        .type-tab:hover:not(.active) { background: #e7f3ff; }
+        .type-tab.active { background: #004080; color: #fff; }
+        .type-tab .badge { display: inline-block; background: #ffc107; color: #000; border-radius: 10px; padding: 1px 8px; font-size: 11px; margin-left: 6px; }
+        .type-tab.active .badge { background: #fff; color: #004080; }
 
         /* BUTTONS */
         .btn-gold { padding: 13px 28px; background: #ffc107; color: #000; border: 2px solid #ffc107; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
         .btn-gold:hover { background: #e0a800; }
         .btn-gold:disabled { background: #e9ecef; color: #666; border-color: #ccc; cursor: wait; }
-        .btn-secondary { padding: 13px 24px; background: #fff; color: #004080; border: 2px solid #004080; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
+        .btn-secondary { padding: 11px 22px; background: #fff; color: #004080; border: 2px solid #004080; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
         .btn-secondary:hover { background: #004080; color: #fff; }
-        .btn-secondary:disabled { opacity: 0.6; cursor: wait; }
-        .btn-reset { padding: 13px 24px; background: #fff; color: #dc3545; border: 2px solid #dc3545; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
+        .btn-secondary:disabled { opacity: 0.55; cursor: wait; }
+        .btn-reset { padding: 11px 22px; background: #fff; color: #dc3545; border: 2px solid #dc3545; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
         .btn-reset:hover { background: #dc3545; color: #fff; }
         .btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 24px; }
+        .btn-inline-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
 
         /* PROGRESS */
-        .progress-wrap { margin: 14px 0; display: none; }
+        .progress-wrap { margin: 12px 0; }
         .progress-bar { height: 22px; background: #e9ecef; border-radius: 6px; overflow: hidden; border: 2px solid #004080; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #004080, #0066cc); transition: width 0.3s; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 700; min-width: 32px; }
-        .log-box { margin-top: 10px; background: #1a1a2e; border-radius: 6px; padding: 12px; max-height: 150px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 11px; }
+        .log-box { margin-top: 8px; background: #1a1a2e; border-radius: 6px; padding: 10px; max-height: 130px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 11px; }
         .log-line { padding: 2px 0; border-bottom: 1px solid #2a2a3e; }
         .log-line.info { color: #17a2b8; }
         .log-line.success { color: #28a745; }
         .log-line.error { color: #dc3545; }
         .log-line.warning { color: #ffc107; }
+
+        /* INFO BOX */
+        .info-box { background: #e7f3ff; border: 2px solid #004080; border-radius: 6px; padding: 12px 16px; font-size: 12px; color: #004080; margin-bottom: 14px; line-height: 1.6; }
+        .info-box strong { font-weight: 700; }
 
         /* NOTIFICATION */
         .notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 13px 26px; border-radius: 8px; font-weight: 600; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-size: 13px; }
@@ -147,7 +167,7 @@
         </div>
         <div class="login-header">
             <h1>DHIS2 METADATA EXPORT</h1>
-            <p>Select Data Elements &amp; Indicators to Export</p>
+            <p>Select Datasets · Data Elements · Indicators</p>
         </div>
         <div class="form-group">
             <label class="form-label">DHIS2 Instance URL</label>
@@ -177,37 +197,103 @@
             <h3>Informatics Consultancy Firm-Sierra Leone (ICF-SL)</h3>
             <p class="tagline">Driving Data-Driven Solutions for Health and Development</p>
             <h1>DHIS2 METADATA EXPORT TOOL</h1>
-            <p class="subtitle">Select Data Elements and Indicators, then Export with UIDs to Excel or CSV</p>
+            <p class="subtitle">Step-by-step: Pick Datasets → Fetch Data Elements → Select & Export</p>
         </div>
 
         <div class="content-card">
             <div class="content-inner">
 
-                <!-- SECTION 1: LOAD -->
+                <!-- ══ STEP 1: LOAD & SELECT DATASETS ══ -->
                 <div class="section-header">
                     <span class="section-icon">1</span>
-                    <span class="section-title">LOAD METADATA</span>
+                    <span class="section-title">LOAD &amp; SELECT DATASETS</span>
+                    <span class="section-subtitle">Only datasets you select will be used in Step 2</span>
                 </div>
 
-                <div style="margin-bottom:18px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
-                    <button class="btn-secondary" id="fetchBtn" onclick="fetchMetadata()" style="width:auto;">Load Metadata</button>
-                    <span id="loadStatus" style="font-size:13px; color:#666;"></span>
+                <div class="btn-inline-row">
+                    <button class="btn-secondary" id="loadDsBtn" onclick="loadDatasets()">Load Datasets</button>
+                    <span id="dsLoadStatus" style="font-size:12px;color:#666;"></span>
                 </div>
 
-                <div class="progress-wrap" id="progressWrap">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill" style="width:0%">0%</div>
+                <div class="progress-wrap" id="dsProgressWrap" style="display:none;">
+                    <div class="progress-bar"><div class="progress-fill" id="dsProgress" style="width:0%">0%</div></div>
+                    <div class="log-box" id="dsLog"></div>
+                </div>
+
+                <div id="dsPanel" style="display:none;">
+                    <div class="dual-panel">
+                        <!-- Available datasets -->
+                        <div class="panel">
+                            <div class="panel-header">
+                                <span class="panel-title">Available Datasets</span>
+                                <span class="panel-count" id="dsAvailCount">0</span>
+                            </div>
+                            <div class="panel-search-wrap">
+                                <input class="panel-search" id="dsAvailSearch" placeholder="Search datasets..." oninput="renderDsAvail()">
+                                <button class="clear-search-btn" onclick="document.getElementById('dsAvailSearch').value='';renderDsAvail()">&#x2715; Clear</button>
+                            </div>
+                            <div class="panel-actions">
+                                <button class="panel-action-btn btn-add-all" onclick="addAllDs()">Add All Visible</button>
+                            </div>
+                            <div class="panel-body" id="dsAvailPanel">
+                                <p style="color:#999;text-align:center;padding:20px;font-size:13px;">Click "Load Datasets" to start</p>
+                            </div>
+                        </div>
+                        <!-- Selected datasets -->
+                        <div class="panel">
+                            <div class="panel-header">
+                                <span class="panel-title">Selected Datasets</span>
+                                <span class="panel-count" id="dsSelCount">0</span>
+                            </div>
+                            <div class="panel-search-wrap">
+                                <input class="panel-search" id="dsSelSearch" placeholder="Search selected..." oninput="renderDsSel()">
+                                <button class="clear-search-btn" onclick="document.getElementById('dsSelSearch').value='';renderDsSel()">&#x2715; Clear</button>
+                            </div>
+                            <div class="panel-actions">
+                                <button class="panel-action-btn btn-clear-all" onclick="clearAllDs()">Remove All</button>
+                            </div>
+                            <div class="panel-body" id="dsSelPanel">
+                                <p style="color:#999;text-align:center;padding:20px;font-size:13px;">No datasets selected</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="log-box" id="logBox"></div>
                 </div>
 
-                <!-- SECTION 2: SELECT -->
-                <div class="section-header" style="margin-top:24px;">
+                <hr class="step-divider">
+
+                <!-- ══ STEP 2: FETCH DATA ELEMENTS FOR SELECTED DATASETS ══ -->
+                <div class="section-header">
                     <span class="section-icon">2</span>
-                    <span class="section-title">SELECT VARIABLES</span>
+                    <span class="section-title">FETCH DATA ELEMENTS</span>
+                    <span class="section-subtitle">Fetches only elements from your selected datasets</span>
                 </div>
 
-                <!-- Type tabs -->
+                <div class="info-box" id="deInfoBox">
+                    Select datasets in Step 1 first, then click the button below to fetch their data elements and category option combos.
+                </div>
+
+                <div class="btn-inline-row">
+                    <button class="btn-gold" id="fetchDeBtn" onclick="fetchDataElements()" disabled>Fetch Data Elements</button>
+                    <button class="btn-secondary" id="fetchIndBtn" onclick="fetchIndicators()" style="border-color:#6f42c1;color:#6f42c1;" onmouseover="this.style.background='#6f42c1';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='#6f42c1'">
+                        Load Indicators (Optional)
+                    </button>
+                    <span id="deLoadStatus" style="font-size:12px;color:#666;"></span>
+                </div>
+
+                <div class="progress-wrap" id="deProgressWrap" style="display:none;">
+                    <div class="progress-bar"><div class="progress-fill" id="deProgress" style="width:0%">0%</div></div>
+                    <div class="log-box" id="deLog"></div>
+                </div>
+
+                <hr class="step-divider">
+
+                <!-- ══ STEP 3: SELECT VARIABLES TO EXPORT ══ -->
+                <div class="section-header">
+                    <span class="section-icon">3</span>
+                    <span class="section-title">SELECT VARIABLES TO EXPORT</span>
+                </div>
+
+                <!-- Tab switcher -->
                 <div class="type-tabs">
                     <div class="type-tab active" id="tabDE" onclick="switchType('de')">
                         Data Elements <span class="badge" id="badgeDE">0</span>
@@ -217,38 +303,36 @@
                     </div>
                 </div>
 
-                <!-- DATA ELEMENTS panel pair -->
+                <!-- DATA ELEMENTS panels -->
                 <div id="paneDE">
                     <div class="dual-panel">
-                        <!-- Available -->
                         <div class="panel">
                             <div class="panel-header">
                                 <span class="panel-title">Available Data Elements</span>
                                 <span class="panel-count" id="deAvailCount">0</span>
                             </div>
                             <div class="panel-search-wrap">
-                                <input class="panel-search" id="deAvailSearch" placeholder="Search data elements..." oninput="filterAvail('de')">
-                                <button class="clear-search-btn" onclick="clearSearch('de')">&#x2715; Clear</button>
+                                <input class="panel-search" id="deAvailSearch" placeholder="Search data elements..." oninput="renderDeAvail()">
+                                <button class="clear-search-btn" onclick="document.getElementById('deAvailSearch').value='';renderDeAvail()">&#x2715; Clear</button>
                             </div>
                             <div class="panel-actions">
-                                <button class="panel-action-btn btn-add-all" onclick="addAll('de')">Add All Visible</button>
+                                <button class="panel-action-btn btn-add-all" onclick="addAllDe()">Add All Visible</button>
                             </div>
                             <div class="panel-body" id="deAvailPanel">
-                                <p style="color:#999;text-align:center;padding:20px;font-size:13px;">Click "Load Metadata" to start</p>
+                                <p style="color:#999;text-align:center;padding:20px;font-size:13px;">Complete Steps 1 &amp; 2 first</p>
                             </div>
                         </div>
-                        <!-- Selected -->
                         <div class="panel">
                             <div class="panel-header">
                                 <span class="panel-title">Selected Data Elements</span>
                                 <span class="panel-count" id="deSelCount">0</span>
                             </div>
                             <div class="panel-search-wrap">
-                                <input class="panel-search" id="deSelSearch" placeholder="Search selected..." oninput="filterSel('de')">
-                                <button class="clear-search-btn" onclick="clearSelSearch('de')">&#x2715; Clear</button>
+                                <input class="panel-search" id="deSelSearch" placeholder="Search selected..." oninput="renderDeSel()">
+                                <button class="clear-search-btn" onclick="document.getElementById('deSelSearch').value='';renderDeSel()">&#x2715; Clear</button>
                             </div>
                             <div class="panel-actions">
-                                <button class="panel-action-btn btn-clear-all" onclick="clearAll('de')">Remove All</button>
+                                <button class="panel-action-btn btn-clear-all" onclick="selDE.clear();renderDeAvail();renderDeSel()">Remove All</button>
                             </div>
                             <div class="panel-body" id="deSelPanel">
                                 <p style="color:#999;text-align:center;padding:20px;font-size:13px;">No data elements selected</p>
@@ -257,38 +341,36 @@
                     </div>
                 </div>
 
-                <!-- INDICATORS panel pair -->
+                <!-- INDICATORS panels -->
                 <div id="paneInd" style="display:none;">
                     <div class="dual-panel">
-                        <!-- Available -->
                         <div class="panel">
                             <div class="panel-header">
                                 <span class="panel-title">Available Indicators</span>
                                 <span class="panel-count" id="indAvailCount">0</span>
                             </div>
                             <div class="panel-search-wrap">
-                                <input class="panel-search" id="indAvailSearch" placeholder="Search indicators..." oninput="filterAvail('ind')">
-                                <button class="clear-search-btn" onclick="clearSearch('ind')">&#x2715; Clear</button>
+                                <input class="panel-search" id="indAvailSearch" placeholder="Search indicators..." oninput="renderIndAvail()">
+                                <button class="clear-search-btn" onclick="document.getElementById('indAvailSearch').value='';renderIndAvail()">&#x2715; Clear</button>
                             </div>
                             <div class="panel-actions">
-                                <button class="panel-action-btn btn-add-all" onclick="addAll('ind')">Add All Visible</button>
+                                <button class="panel-action-btn btn-add-all" onclick="addAllInd()">Add All Visible</button>
                             </div>
                             <div class="panel-body" id="indAvailPanel">
-                                <p style="color:#999;text-align:center;padding:20px;font-size:13px;">Click "Load Metadata" to start</p>
+                                <p style="color:#999;text-align:center;padding:20px;font-size:13px;">Click "Load Indicators" in Step 2</p>
                             </div>
                         </div>
-                        <!-- Selected -->
                         <div class="panel">
                             <div class="panel-header">
                                 <span class="panel-title">Selected Indicators</span>
                                 <span class="panel-count" id="indSelCount">0</span>
                             </div>
                             <div class="panel-search-wrap">
-                                <input class="panel-search" id="indSelSearch" placeholder="Search selected..." oninput="filterSel('ind')">
-                                <button class="clear-search-btn" onclick="clearSelSearch('ind')">&#x2715; Clear</button>
+                                <input class="panel-search" id="indSelSearch" placeholder="Search selected..." oninput="renderIndSel()">
+                                <button class="clear-search-btn" onclick="document.getElementById('indSelSearch').value='';renderIndSel()">&#x2715; Clear</button>
                             </div>
                             <div class="panel-actions">
-                                <button class="panel-action-btn btn-clear-all" onclick="clearAll('ind')">Remove All</button>
+                                <button class="panel-action-btn btn-clear-all" onclick="selInd.clear();renderIndAvail();renderIndSel()">Remove All</button>
                             </div>
                             <div class="panel-body" id="indSelPanel">
                                 <p style="color:#999;text-align:center;padding:20px;font-size:13px;">No indicators selected</p>
@@ -321,44 +403,41 @@
 const PROXY = 'https://script.google.com/macros/s/AKfycbyRXc68PYSmDSCYPakAS8Gc9R00kRjmsMYoDujPYMItyquXfwMAJUtRqXLiDlNWbSfDQQ/exec';
 let cfg = null;
 
-// Raw data from API
-let allDataElements = []; // [{ uid, name, datasetUid, datasetName, periodType }]
-let allIndicators   = []; // [{ uid, name, type, annualized, numDesc, denDesc, numerator, denominator }]
+// Raw data
+let allDatasets   = [];  // [{uid, name, periodType}]
+let allDataElements = []; // [{key, uid, name, datasetUid, datasetName, periodType, categoryComboName, cocs:[{id,name}]}]
+let allIndicators = [];  // [{uid, name, type, annualized, numDesc, denDesc, numerator, denominator}]
 
-// Selected sets — keys are UIDs
-let selDE  = new Map(); // uid -> object
-let selInd = new Map();
+// Selections
+let selDs  = new Map(); // uid -> dataset object
+let selDE  = new Map(); // key (deUid|dsUid) -> de object
+let selInd = new Map(); // uid -> indicator object
 
-// Tracks which dataset groups are open in the available panel
+// Open group state for DE available panel
 const openGroups = new Set();
-
-let currentType = 'de';
 
 // ── Utility ────────────────────────────────────────────────────────────────
 function notify(msg, type) {
     const n = document.getElementById('notification');
-    n.textContent = msg;
-    n.className = 'notification ' + type;
+    n.textContent = msg; n.className = 'notification ' + type;
     setTimeout(() => { n.className = 'notification'; }, 5000);
 }
-function log(msg, type = 'info') {
-    const box = document.getElementById('logBox');
+function logTo(boxId, msg, type = 'info') {
+    const box = document.getElementById(boxId);
     const d = document.createElement('div');
     d.className = 'log-line ' + type;
     d.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
-    box.appendChild(d);
-    box.scrollTop = box.scrollHeight;
+    box.appendChild(d); box.scrollTop = box.scrollHeight;
 }
-function setProgress(p) {
-    const f = document.getElementById('progressFill');
-    f.style.width = p + '%';
-    f.textContent = p + '%';
+function setProgress(fillId, pct) {
+    const f = document.getElementById(fillId);
+    f.style.width = pct + '%'; f.textContent = pct + '%';
 }
 function proxyFetch(url) {
     const auth = 'Basic ' + btoa(cfg.username + ':' + cfg.password);
     return fetch(PROXY + '?url=' + encodeURIComponent(url) + '&Authorization=' + encodeURIComponent(auth));
 }
-function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ── Login ──────────────────────────────────────────────────────────────────
 async function doLogin() {
@@ -373,132 +452,228 @@ async function doLogin() {
         const r = await fetch(PROXY + '?url=' + encodeURIComponent(instanceUrl + '/api/me') + '&Authorization=' + encodeURIComponent(auth));
         if (r.ok) {
             const u = await r.json();
-            const name = ((u.firstName || '') + ' ' + (u.surname || '')).trim() || 'User';
+            const name = ((u.firstName||'') + ' ' + (u.surname||'')).trim() || 'User';
             notify('Connected! Welcome ' + name, 'success');
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainContent').classList.add('active');
-        } else {
-            notify('Auth failed (' + r.status + ')', 'error'); cfg = null;
-        }
+        } else { notify('Auth failed (' + r.status + ')', 'error'); cfg = null; }
     } catch(e) { notify('Connection error: ' + e.message, 'error'); cfg = null; }
     finally { btn.disabled = false; btn.textContent = 'Connect to DHIS2'; }
 }
 
-// ── Tab switch ─────────────────────────────────────────────────────────────
-function switchType(type) {
-    currentType = type;
-    document.getElementById('paneDE').style.display  = type === 'de'  ? 'block' : 'none';
-    document.getElementById('paneInd').style.display = type === 'ind' ? 'block' : 'none';
-    document.getElementById('tabDE').classList.toggle('active',  type === 'de');
-    document.getElementById('tabInd').classList.toggle('active', type === 'ind');
-}
-
-// ── Fetch metadata ─────────────────────────────────────────────────────────
-async function fetchMetadata() {
+// ══════════════════════════════════════════════════════════════════════════
+// STEP 1 — LOAD & SELECT DATASETS
+// ══════════════════════════════════════════════════════════════════════════
+async function loadDatasets() {
     if (!cfg) { notify('Not connected', 'error'); return; }
-    const btn = document.getElementById('fetchBtn');
+    const btn = document.getElementById('loadDsBtn');
     btn.disabled = true; btn.textContent = 'Loading...';
-    document.getElementById('progressWrap').style.display = 'block';
-    document.getElementById('logBox').innerHTML = '';
-    setProgress(0);
-    allDataElements = []; allIndicators = [];
+    document.getElementById('dsProgressWrap').style.display = 'block';
+    document.getElementById('dsLog').innerHTML = '';
+    setProgress('dsProgress', 0);
 
     try {
-        // 1. Datasets + data elements
-        log('Fetching datasets with data elements...', 'info');
-        setProgress(5);
-        const dsResp = await proxyFetch(cfg.instanceUrl + '/api/dataSets.json?fields=id,displayName,name,periodType,dataSetElements[dataElement[id,displayName,name]]&paging=false');
-        if (!dsResp.ok) throw new Error('Datasets HTTP ' + dsResp.status);
-        const dsData = await dsResp.json();
-        const datasets = dsData.dataSets || [];
-        setProgress(30);
-        log('Received ' + datasets.length + ' datasets', 'success');
+        logTo('dsLog', 'Fetching dataset list...', 'info');
+        setProgress('dsProgress', 20);
+        // Only fetch id, displayName, periodType — no dataSetElements yet
+        const r = await proxyFetch(cfg.instanceUrl + '/api/dataSets.json?fields=id,displayName,periodType&paging=false');
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const data = await r.json();
+        allDatasets = (data.dataSets || [])
+            .map(ds => ({ uid: ds.id, name: ds.displayName || ds.id, periodType: ds.periodType || '' }))
+            .sort((a,b) => a.name.localeCompare(b.name));
+        setProgress('dsProgress', 100);
+        logTo('dsLog', 'Loaded ' + allDatasets.length + ' datasets. Select the ones you need.', 'success');
+        document.getElementById('dsLoadStatus').textContent = allDatasets.length + ' datasets loaded';
+        document.getElementById('dsPanel').style.display = 'block';
+        renderDsAvail();
+        renderDsSel();
+    } catch(e) {
+        logTo('dsLog', 'ERROR: ' + e.message, 'error');
+        notify('Failed to load datasets: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false; btn.textContent = 'Reload Datasets';
+    }
+}
 
-        // Collect all unique DE UIDs across all datasets
-        const allDeUids = new Set();
-        datasets.forEach(ds => {
-            (ds.dataSetElements || []).forEach(dse => {
-                if (dse.dataElement) allDeUids.add(dse.dataElement.id);
-            });
-        });
-        log('Found ' + allDeUids.size + ' unique data elements. Fetching category combos...', 'info');
-        setProgress(35);
+function renderDsAvail() {
+    const search  = document.getElementById('dsAvailSearch').value.toLowerCase();
+    const panel   = document.getElementById('dsAvailPanel');
+    const visible = allDatasets.filter(ds => !selDs.has(ds.uid) && (!search || ds.name.toLowerCase().includes(search)));
+    document.getElementById('dsAvailCount').textContent = visible.length;
+    if (!visible.length) { panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;font-size:13px;">' + (allDatasets.length ? 'All added or no match' : 'Click "Load Datasets"') + '</p>'; return; }
+    const frag = document.createDocumentFragment();
+    visible.forEach(ds => {
+        const div = document.createElement('div');
+        div.className = 'ds-item';
+        div.innerHTML = '<span class="ds-item-name">' + esc(ds.name) + '</span>' +
+            '<span class="ds-item-period">' + esc(ds.periodType) + '</span>' +
+            '<button class="add-btn" onclick="addDs(\'' + ds.uid + '\')">+ Add</button>';
+        div.ondblclick = () => addDs(ds.uid);
+        frag.appendChild(div);
+    });
+    panel.innerHTML = ''; panel.appendChild(frag);
+}
 
-        // Fetch full DE metadata including categoryCombo in batches of 100
-        const deUidArr = Array.from(allDeUids);
-        const cocMap = new Map(); // deUid -> { categoryComboName, cocs: [{id, name}] }
+function renderDsSel() {
+    const search  = document.getElementById('dsSelSearch').value.toLowerCase();
+    const panel   = document.getElementById('dsSelPanel');
+    const items   = Array.from(selDs.values()).filter(ds => !search || ds.name.toLowerCase().includes(search));
+    document.getElementById('dsSelCount').textContent = selDs.size;
+    // Enable/disable the fetch DE button
+    document.getElementById('fetchDeBtn').disabled = selDs.size === 0;
+    if (!items.length) { panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;font-size:13px;">No datasets selected</p>'; return; }
+    const frag = document.createDocumentFragment();
+    items.sort((a,b) => a.name.localeCompare(b.name)).forEach(ds => {
+        const div = document.createElement('div');
+        div.className = 'sel-ds-item';
+        div.innerHTML = '<span class="sel-ds-name">' + esc(ds.name) + '</span>' +
+            '<span class="sel-ds-uid">' + ds.uid + '</span>' +
+            '<button class="remove-btn" onclick="removeDs(\'' + ds.uid + '\')">×</button>';
+        frag.appendChild(div);
+    });
+    panel.innerHTML = ''; panel.appendChild(frag);
+    // Update info box
+    document.getElementById('deInfoBox').innerHTML =
+        '<strong>' + selDs.size + ' dataset(s) selected.</strong> Click "Fetch Data Elements" to load only their elements.';
+}
+
+function addDs(uid) { const ds = allDatasets.find(d => d.uid === uid); if (ds) { selDs.set(uid, ds); renderDsAvail(); renderDsSel(); } }
+function removeDs(uid) { selDs.delete(uid); renderDsAvail(); renderDsSel(); }
+function addAllDs() {
+    const search = document.getElementById('dsAvailSearch').value.toLowerCase();
+    allDatasets.filter(ds => !selDs.has(ds.uid) && (!search || ds.name.toLowerCase().includes(search)))
+               .forEach(ds => selDs.set(ds.uid, ds));
+    renderDsAvail(); renderDsSel();
+}
+function clearAllDs() { selDs.clear(); renderDsAvail(); renderDsSel(); }
+
+// ══════════════════════════════════════════════════════════════════════════
+// STEP 2a — FETCH DATA ELEMENTS (only for selected datasets)
+// ══════════════════════════════════════════════════════════════════════════
+async function fetchDataElements() {
+    if (!cfg) { notify('Not connected', 'error'); return; }
+    if (selDs.size === 0) { notify('Select at least one dataset first', 'error'); return; }
+
+    const btn = document.getElementById('fetchDeBtn');
+    btn.disabled = true; btn.textContent = 'Fetching...';
+    document.getElementById('deProgressWrap').style.display = 'block';
+    document.getElementById('deLog').innerHTML = '';
+    setProgress('deProgress', 0);
+    allDataElements = [];
+    selDE.clear(); openGroups.clear();
+
+    try {
+        const selectedDsUids = Array.from(selDs.keys());
+        logTo('deLog', 'Fetching data elements for ' + selectedDsUids.length + ' dataset(s)...', 'info');
+        setProgress('deProgress', 5);
+
+        // Fetch full dataset detail (with dataSetElements) only for selected datasets
+        // Use filter=id:in:[...] to batch if needed, but datasets are few so one call is fine
+        const dsFilter = 'filter=id:in:[' + selectedDsUids.join(',') + ']';
+        const r = await proxyFetch(cfg.instanceUrl + '/api/dataSets.json?' + dsFilter + '&fields=id,displayName,periodType,dataSetElements[dataElement[id,displayName]]&paging=false');
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const data = await r.json();
+        const datasets = data.dataSets || [];
+        setProgress('deProgress', 25);
+        logTo('deLog', 'Dataset details loaded. Collecting data element UIDs...', 'info');
+
+        // Collect all unique DE UIDs across selected datasets
+        const deUidSet = new Set();
+        datasets.forEach(ds => { (ds.dataSetElements || []).forEach(dse => { if (dse.dataElement) deUidSet.add(dse.dataElement.id); }); });
+        const deUidArr = Array.from(deUidSet);
+        logTo('deLog', deUidArr.length + ' unique data elements found. Fetching category combos...', 'info');
+        setProgress('deProgress', 30);
+
+        // Fetch category combos in batches of 100
+        const cocMap = new Map(); // deUid -> {categoryComboName, cocs:[{id,name}]}
         const batchSize = 100;
         for (let i = 0; i < deUidArr.length; i += batchSize) {
             const batch = deUidArr.slice(i, i + batchSize).join(',');
-            const deResp = await proxyFetch(cfg.instanceUrl + '/api/dataElements.json?filter=id:in:[' + batch + ']&fields=id,categoryCombo[id,displayName,categoryOptionCombos[id,displayName]]&paging=false');
-            if (deResp.ok) {
-                const deData = await deResp.json();
-                (deData.dataElements || []).forEach(de => {
+            const cr = await proxyFetch(cfg.instanceUrl + '/api/dataElements.json?filter=id:in:[' + batch + ']&fields=id,categoryCombo[id,displayName,categoryOptionCombos[id,displayName]]&paging=false');
+            if (cr.ok) {
+                const cd = await cr.json();
+                (cd.dataElements || []).forEach(de => {
                     if (!de.categoryCombo) return;
                     const cocs = (de.categoryCombo.categoryOptionCombos || [])
                         .map(c => ({ id: c.id, name: c.displayName || c.id }))
-                        .sort((a, b) => a.name.localeCompare(b.name));
+                        .sort((a,b) => a.name.localeCompare(b.name));
                     cocMap.set(de.id, { categoryComboName: de.categoryCombo.displayName || '', cocs });
                 });
             }
-            setProgress(35 + Math.round((i / deUidArr.length) * 15));
+            setProgress('deProgress', 30 + Math.round(((i + batchSize) / deUidArr.length) * 55));
         }
-        log('Category combo data loaded for ' + cocMap.size + ' data elements', 'success');
-        setProgress(50);
+        logTo('deLog', 'Category combos loaded for ' + cocMap.size + ' elements.', 'success');
 
-        // Build one entry per DE+dataset combination (key = deUid|datasetUid)
-        // This lets the user pick exactly which dataset to source each DE from
-        const entries = [];
+        // Build one entry per DE+dataset (key = deUid|dsUid)
+        // Track which DE UIDs we have already seen — first dataset that provides a DE wins
+        // (but we show all copies so user can pick the dataset they want)
         datasets.forEach(ds => {
-            const dsName = ds.displayName || ds.name || ds.id;
+            const dsName = ds.displayName || ds.id;
             (ds.dataSetElements || []).forEach(dse => {
                 if (!dse.dataElement) return;
-                const deUid  = dse.dataElement.id;
-                const deName = dse.dataElement.displayName || dse.dataElement.name || deUid;
-                const cocInfo = cocMap.get(deUid) || { categoryComboName: '', cocs: [] };
-                entries.push({
-                    key:              deUid + '|' + ds.id,   // unique per DE+dataset combo
-                    uid:              deUid,
-                    name:             deName,
+                const uid   = dse.dataElement.id;
+                const name  = dse.dataElement.displayName || uid;
+                const cInfo = cocMap.get(uid) || { categoryComboName: '', cocs: [] };
+                allDataElements.push({
+                    key:              uid + '|' + ds.id,
+                    uid,
+                    name,
                     datasetUid:       ds.id,
                     datasetName:      dsName,
                     periodType:       ds.periodType || '',
-                    categoryComboName: cocInfo.categoryComboName,
-                    cocs:             cocInfo.cocs
+                    categoryComboName: cInfo.categoryComboName,
+                    cocs:             cInfo.cocs
                 });
             });
         });
-        allDataElements = entries.sort((a, b) => {
-            const d = a.datasetName.localeCompare(b.datasetName);
-            return d !== 0 ? d : a.name.localeCompare(b.name);
-        });
-        log('Built ' + allDataElements.length + ' DE+dataset entries', 'success');
-        setProgress(52);
+        allDataElements.sort((a,b) => { const d = a.datasetName.localeCompare(b.datasetName); return d !== 0 ? d : a.name.localeCompare(b.name); });
 
-        // 2. Indicator types
-        log('Fetching indicator types...', 'info');
+        const uniqueCount = new Set(allDataElements.map(e => e.uid)).size;
+        setProgress('deProgress', 100);
+        logTo('deLog', 'Ready: ' + uniqueCount + ' unique data elements (' + allDataElements.length + ' DE+dataset entries).', 'success');
+        document.getElementById('deLoadStatus').textContent = uniqueCount + ' data elements ready';
+        document.getElementById('badgeDE').textContent = uniqueCount;
+        renderDeAvail(); renderDeSel();
+        notify('Data elements loaded: ' + uniqueCount + ' unique elements', 'success');
+
+    } catch(e) {
+        logTo('deLog', 'ERROR: ' + e.message, 'error');
+        notify('Failed: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false; btn.textContent = 'Re-fetch Data Elements';
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// STEP 2b — FETCH INDICATORS (optional)
+// ══════════════════════════════════════════════════════════════════════════
+async function fetchIndicators() {
+    if (!cfg) { notify('Not connected', 'error'); return; }
+    const btn = document.getElementById('fetchIndBtn');
+    btn.disabled = true; btn.textContent = 'Loading indicators...';
+    document.getElementById('deProgressWrap').style.display = 'block';
+    document.getElementById('deLog').innerHTML = '';
+    setProgress('deProgress', 0);
+    allIndicators = []; selInd.clear();
+
+    try {
+        logTo('deLog', 'Fetching indicator types...', 'info');
+        setProgress('deProgress', 10);
         const typeMap = {};
-        const itResp = await proxyFetch(cfg.instanceUrl + '/api/indicatorTypes.json?fields=id,displayName,name,factor,number&paging=false');
-        if (itResp.ok) {
-            const itData = await itResp.json();
-            (itData.indicatorTypes || []).forEach(it => {
-                typeMap[it.id] = it.number ? 'Number' : ((it.displayName || it.name) + ' (×' + (it.factor || 1) + ')');
-            });
+        const tr = await proxyFetch(cfg.instanceUrl + '/api/indicatorTypes.json?fields=id,displayName,factor,number&paging=false');
+        if (tr.ok) {
+            const td = await tr.json();
+            (td.indicatorTypes || []).forEach(it => { typeMap[it.id] = it.number ? 'Number' : ((it.displayName||'') + ' (×' + (it.factor||1) + ')'); });
         }
-        setProgress(65);
-
-        // 3. Indicators
-        log('Fetching indicators...', 'info');
-        const indResp = await proxyFetch(cfg.instanceUrl + '/api/indicators.json?fields=id,displayName,name,annualized,indicatorType[id],numerator,denominator,numeratorDescription,denominatorDescription&paging=false');
-        if (!indResp.ok) throw new Error('Indicators HTTP ' + indResp.status);
-        const indData = await indResp.json();
-        const rawInds = indData.indicators || [];
-        setProgress(85);
-        log('Received ' + rawInds.length + ' indicators', 'success');
-
-        allIndicators = rawInds.map(ind => ({
+        setProgress('deProgress', 30);
+        logTo('deLog', 'Fetching indicators...', 'info');
+        const ir = await proxyFetch(cfg.instanceUrl + '/api/indicators.json?fields=id,displayName,annualized,indicatorType[id],numerator,denominator,numeratorDescription,denominatorDescription&paging=false');
+        if (!ir.ok) throw new Error('HTTP ' + ir.status);
+        const id = await ir.json();
+        allIndicators = (id.indicators || []).map(ind => ({
             uid:         ind.id,
-            name:        ind.displayName || ind.name || ind.id,
+            name:        ind.displayName || ind.id,
             type:        (ind.indicatorType && typeMap[ind.indicatorType.id]) ? typeMap[ind.indicatorType.id] : '',
             annualized:  ind.annualized ? 'Yes' : 'No',
             numDesc:     ind.numeratorDescription   || '',
@@ -507,246 +682,191 @@ async function fetchMetadata() {
             denominator: ind.denominator || ''
         })).sort((a,b) => a.name.localeCompare(b.name));
 
-        const uniqueDeCount = new Set(allDataElements.map(e => e.uid)).size;
-        document.getElementById('badgeDE').textContent  = uniqueDeCount;
+        setProgress('deProgress', 100);
         document.getElementById('badgeInd').textContent = allIndicators.length;
-        document.getElementById('loadStatus').textContent =
-            uniqueDeCount + ' data elements (' + allDataElements.length + ' DE+dataset entries) · ' + allIndicators.length + ' indicators loaded';
-
-        renderAvail('de');
-        renderAvail('ind');
-        setProgress(100);
-        log('Done — select variables and export below.', 'success');
-        notify('Loaded: ' + allDataElements.length + ' data elements · ' + allIndicators.length + ' indicators', 'success');
-
+        logTo('deLog', 'Loaded ' + allIndicators.length + ' indicators.', 'success');
+        renderIndAvail(); renderIndSel();
+        notify('Indicators loaded: ' + allIndicators.length, 'success');
     } catch(e) {
-        log('ERROR: ' + e.message, 'error');
+        logTo('deLog', 'ERROR: ' + e.message, 'error');
         notify('Failed: ' + e.message, 'error');
     } finally {
-        btn.disabled = false; btn.textContent = 'Reload Metadata';
+        btn.disabled = false; btn.textContent = 'Load Indicators (Optional)';
     }
 }
 
-// ── Render available panel ─────────────────────────────────────────────────
-function renderAvail(type) {
-    const search   = document.getElementById(type === 'de' ? 'deAvailSearch' : 'indAvailSearch').value.toLowerCase();
-    const panel    = document.getElementById(type === 'de' ? 'deAvailPanel'  : 'indAvailPanel');
-    const selMap   = type === 'de' ? selDE : selInd;
-    const allItems = type === 'de' ? allDataElements : allIndicators;
+// ══════════════════════════════════════════════════════════════════════════
+// STEP 3 — SELECT VARIABLES
+// ══════════════════════════════════════════════════════════════════════════
+function switchType(type) {
+    document.getElementById('paneDE').style.display  = type === 'de'  ? 'block' : 'none';
+    document.getElementById('paneInd').style.display = type === 'ind' ? 'block' : 'none';
+    document.getElementById('tabDE').classList.toggle('active',  type === 'de');
+    document.getElementById('tabInd').classList.toggle('active', type === 'ind');
+}
 
-    // UIDs already claimed by a selection (regardless of which dataset)
+// ── Data Elements ──────────────────────────────────────────────────────────
+function renderDeAvail() {
+    const search = document.getElementById('deAvailSearch').value.toLowerCase();
+    const panel  = document.getElementById('deAvailPanel');
     const selectedDeUids = new Set(Array.from(selDE.values()).map(i => i.uid));
 
-    // Filter out already selected and apply search
-    const visible = allItems.filter(item => {
-        if (type === 'de') {
-            if (selectedDeUids.has(item.uid)) return false; // hide all dataset copies once one is selected
-        } else {
-            if (selMap.has(item.uid)) return false;
-        }
-        if (search && !item.name.toLowerCase().includes(search)) return false;
-        return true;
-    });
+    const visible = allDataElements.filter(item =>
+        !selectedDeUids.has(item.uid) && (!search || item.name.toLowerCase().includes(search))
+    );
+    document.getElementById('deAvailCount').textContent = visible.length;
 
-    document.getElementById(type === 'de' ? 'deAvailCount' : 'indAvailCount').textContent = visible.length;
-
-    if (visible.length === 0) {
+    if (!visible.length) {
         panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;font-size:13px;">' +
-            (allItems.length === 0 ? 'Click "Load Metadata" to start' : 'All items selected or no match') + '</p>';
+            (allDataElements.length ? 'All added or no match' : 'Complete Steps 1 & 2 first') + '</p>';
         return;
     }
 
+    // Group by dataset
+    const byDataset = new Map();
+    visible.forEach(item => {
+        if (!byDataset.has(item.datasetName)) byDataset.set(item.datasetName, []);
+        byDataset.get(item.datasetName).push(item);
+    });
+
     const frag = document.createDocumentFragment();
-
-    if (type === 'de') {
-        // Group by dataset
-        const byDataset = new Map();
-        visible.forEach(item => {
-            const key = item.datasetName;
-            if (!byDataset.has(key)) byDataset.set(key, { dsUid: item.datasetUid, items: [] });
-            byDataset.get(key).items.push(item);
-        });
-
-        byDataset.forEach((group, dsName) => {
-            const isOpen = openGroups.has(dsName);
-
-            const hdr = document.createElement('div');
-            hdr.className = 'group-header';
-            hdr.innerHTML = '<span class="group-toggle">' + (isOpen ? '▼' : '▶') + '</span>' +
-                            '<span class="group-name">' + esc(dsName) + '</span>' +
-                            '<span class="group-count">' + group.items.length + '</span>';
-
-            const children = document.createElement('div');
-            children.className = 'group-children' + (isOpen ? ' open' : '');
-
-            hdr.onclick = () => {
-                const nowOpen = children.classList.toggle('open');
-                hdr.querySelector('.group-toggle').textContent = nowOpen ? '▼' : '▶';
-                if (nowOpen) openGroups.add(dsName);
-                else openGroups.delete(dsName);
-            };
-
-            group.items.forEach(item => {
-                children.appendChild(makeAvailItem(item, type));
-            });
-            frag.appendChild(hdr);
-            frag.appendChild(children);
-        });
-    } else {
-        // Indicators: flat list (could group by type if needed)
-        visible.forEach(item => frag.appendChild(makeAvailItem(item, type)));
-    }
-
-    panel.innerHTML = '';
-    panel.appendChild(frag);
+    byDataset.forEach((items, dsName) => {
+        const isOpen = openGroups.has(dsName);
+        const hdr = document.createElement('div');
+        hdr.className = 'group-header';
+        hdr.innerHTML = '<span class="group-toggle">' + (isOpen ? '▼' : '▶') + '</span>' +
+                        '<span class="group-name">' + esc(dsName) + '</span>' +
+                        '<span class="group-count">' + items.length + '</span>';
+        const children = document.createElement('div');
+        children.className = 'group-children' + (isOpen ? ' open' : '');
+        hdr.onclick = () => {
+            const now = children.classList.toggle('open');
+            hdr.querySelector('.group-toggle').textContent = now ? '▼' : '▶';
+            if (now) openGroups.add(dsName); else openGroups.delete(dsName);
+        };
+        items.forEach(item => children.appendChild(makeDeAvailItem(item)));
+        frag.appendChild(hdr); frag.appendChild(children);
+    });
+    panel.innerHTML = ''; panel.appendChild(frag);
 }
 
-function makeAvailItem(item, type) {
+function makeDeAvailItem(item) {
     const div = document.createElement('div');
     div.className = 'avail-item';
-    const selKey = type === 'de' ? item.key : item.uid;
-    div.dataset.key = selKey;
-    const cocHint = (type === 'de' && item.categoryComboName && item.categoryComboName.toLowerCase() !== 'default')
-        ? '<span style="font-size:10px;color:#0056b3;margin-left:6px;font-style:italic;">[' + esc(item.categoryComboName) + ' · ' + item.cocs.length + ' combos]</span>'
-        : '';
-    div.innerHTML =
-        '<span class="avail-item-name">' + esc(item.name) + cocHint + '</span>' +
+    const cocHint = (item.categoryComboName && item.categoryComboName.toLowerCase() !== 'default')
+        ? ' <span style="font-size:10px;color:#0056b3;font-style:italic;">[' + esc(item.categoryComboName) + ' · ' + item.cocs.length + ' combos]</span>' : '';
+    div.innerHTML = '<span class="avail-item-name">' + esc(item.name) + cocHint + '</span>' +
         '<span class="avail-item-uid">' + item.uid + '</span>' +
-        '<button class="add-btn" onclick="addItem(\'' + type + '\',\'' + selKey + '\')">+ Add</button>';
-    div.ondblclick = () => addItem(type, selKey);
+        '<button class="add-btn" onclick="addDe(\'' + item.key + '\')">+ Add</button>';
+    div.ondblclick = () => addDe(item.key);
     return div;
 }
 
-// ── Render selected panel ──────────────────────────────────────────────────
-function renderSel(type) {
-    const search = document.getElementById(type === 'de' ? 'deSelSearch' : 'indSelSearch').value.toLowerCase();
-    const panel  = document.getElementById(type === 'de' ? 'deSelPanel'  : 'indSelPanel');
-    const selMap = type === 'de' ? selDE : selInd;
-
-    document.getElementById(type === 'de' ? 'deSelCount' : 'indSelCount').textContent = selMap.size;
-
-    if (selMap.size === 0) {
-        panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;font-size:13px;">No items selected</p>';
-        return;
-    }
-
-    const items = Array.from(selMap.values())
-        .filter(item => !search || item.name.toLowerCase().includes(search))
-        .sort((a,b) => {
-            if (type === 'de') {
-                const d = a.datasetName.localeCompare(b.datasetName);
-                return d !== 0 ? d : a.name.localeCompare(b.name);
-            }
-            return a.name.localeCompare(b.name);
-        });
-
+function renderDeSel() {
+    const search = document.getElementById('deSelSearch').value.toLowerCase();
+    const panel  = document.getElementById('deSelPanel');
+    document.getElementById('deSelCount').textContent = selDE.size;
+    const items = Array.from(selDE.values())
+        .filter(i => !search || i.name.toLowerCase().includes(search))
+        .sort((a,b) => { const d = a.datasetName.localeCompare(b.datasetName); return d !== 0 ? d : a.name.localeCompare(b.name); });
+    if (!items.length) { panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;font-size:13px;">No data elements selected</p>'; return; }
     const frag = document.createDocumentFragment();
     items.forEach(item => {
         const div = document.createElement('div');
         div.className = 'sel-item';
-        const selKey = type === 'de' ? item.key : item.uid;
-        div.dataset.key = selKey;
-
-        let meta = '';
-        if (type === 'de') {
-            meta = item.datasetName + ' · ' + item.uid;
-            if (item.categoryComboName && item.categoryComboName.toLowerCase() !== 'default') {
-                meta += ' · ' + item.categoryComboName + ' (' + item.cocs.length + ' combos)';
-            }
-        } else {
-            meta = item.type + ' · ' + item.uid;
-        }
-
-        div.innerHTML =
-            '<span class="sel-item-info">' +
-                '<span class="sel-item-name">' + esc(item.name) + '</span>' +
-                '<span class="sel-item-meta">' + esc(meta) + '</span>' +
-            '</span>' +
-            '<button class="remove-btn" onclick="removeItem(\'' + type + '\',\'' + selKey + '\')" title="Remove">×</button>';
+        let meta = item.datasetName + ' · ' + item.uid;
+        if (item.categoryComboName && item.categoryComboName.toLowerCase() !== 'default') meta += ' · ' + item.categoryComboName + ' (' + item.cocs.length + ' combos)';
+        div.innerHTML = '<span class="sel-item-info"><span class="sel-item-name">' + esc(item.name) + '</span><span class="sel-item-meta">' + esc(meta) + '</span></span>' +
+            '<button class="remove-btn" onclick="removeDe(\'' + item.key + '\')">×</button>';
         frag.appendChild(div);
     });
-
-    panel.innerHTML = '';
-    panel.appendChild(frag);
+    panel.innerHTML = ''; panel.appendChild(frag);
 }
 
-// ── Add / Remove ───────────────────────────────────────────────────────────
-function addItem(type, key) {
-    const all    = type === 'de' ? allDataElements : allIndicators;
-    const selMap = type === 'de' ? selDE : selInd;
-    const item   = type === 'de' ? all.find(i => i.key === key) : all.find(i => i.uid === key);
-    if (!item || selMap.has(key)) return;
-    selMap.set(key, item);
-    renderAvail(type);
-    renderSel(type);
+function addDe(key) {
+    const item = allDataElements.find(i => i.key === key);
+    if (!item || selDE.has(key)) return;
+    // Remove any other dataset copies of the same DE first
+    for (const [k, v] of selDE) { if (v.uid === item.uid) selDE.delete(k); }
+    selDE.set(key, item);
+    renderDeAvail(); renderDeSel();
+}
+function removeDe(key) { selDE.delete(key); renderDeAvail(); renderDeSel(); }
+function addAllDe() {
+    const search = document.getElementById('deAvailSearch').value.toLowerCase();
+    const selectedDeUids = new Set(Array.from(selDE.values()).map(i => i.uid));
+    allDataElements.filter(i => !selectedDeUids.has(i.uid) && (!search || i.name.toLowerCase().includes(search)))
+        .forEach(item => {
+            // If multiple datasets have this DE, take first one encountered (i.e. first in sorted list)
+            if (!Array.from(selDE.values()).some(s => s.uid === item.uid)) selDE.set(item.key, item);
+        });
+    renderDeAvail(); renderDeSel();
 }
 
-function removeItem(type, key) {
-    const selMap = type === 'de' ? selDE : selInd;
-    selMap.delete(key);
-    renderAvail(type);
-    renderSel(type);
-}
-
-function addAll(type) {
-    const search   = document.getElementById(type === 'de' ? 'deAvailSearch' : 'indAvailSearch').value.toLowerCase();
-    const all      = type === 'de' ? allDataElements : allIndicators;
-    const selMap   = type === 'de' ? selDE : selInd;
-    all.filter(item => {
-        const k = type === 'de' ? item.key : item.uid;
-        return !selMap.has(k) && (!search || item.name.toLowerCase().includes(search));
-    }).forEach(item => {
-        const k = type === 'de' ? item.key : item.uid;
-        selMap.set(k, item);
+// ── Indicators ─────────────────────────────────────────────────────────────
+function renderIndAvail() {
+    const search  = document.getElementById('indAvailSearch').value.toLowerCase();
+    const panel   = document.getElementById('indAvailPanel');
+    const visible = allIndicators.filter(i => !selInd.has(i.uid) && (!search || i.name.toLowerCase().includes(search)));
+    document.getElementById('indAvailCount').textContent = visible.length;
+    if (!visible.length) { panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;font-size:13px;">' + (allIndicators.length ? 'All added or no match' : 'Click "Load Indicators" in Step 2') + '</p>'; return; }
+    const frag = document.createDocumentFragment();
+    visible.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'avail-item';
+        div.innerHTML = '<span class="avail-item-name">' + esc(item.name) +
+            (item.type ? ' <span style="font-size:10px;color:#6f42c1;font-style:italic;">[' + esc(item.type) + ']</span>' : '') + '</span>' +
+            '<span class="avail-item-uid">' + item.uid + '</span>' +
+            '<button class="add-btn" onclick="addInd(\'' + item.uid + '\')" style="background:#6f42c1;">+ Add</button>';
+        div.ondblclick = () => addInd(item.uid);
+        frag.appendChild(div);
     });
-    renderAvail(type);
-    renderSel(type);
+    panel.innerHTML = ''; panel.appendChild(frag);
 }
 
-function clearAll(type) {
-    const selMap = type === 'de' ? selDE : selInd;
-    selMap.clear();
-    renderAvail(type);
-    renderSel(type);
+function renderIndSel() {
+    const search = document.getElementById('indSelSearch').value.toLowerCase();
+    const panel  = document.getElementById('indSelPanel');
+    document.getElementById('indSelCount').textContent = selInd.size;
+    const items = Array.from(selInd.values()).filter(i => !search || i.name.toLowerCase().includes(search)).sort((a,b) => a.name.localeCompare(b.name));
+    if (!items.length) { panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;font-size:13px;">No indicators selected</p>'; return; }
+    const frag = document.createDocumentFragment();
+    items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'sel-item';
+        div.innerHTML = '<span class="sel-item-info"><span class="sel-item-name">' + esc(item.name) + '</span><span class="sel-item-meta">' + esc(item.type + ' · ' + item.uid) + '</span></span>' +
+            '<button class="remove-btn" onclick="removeInd(\'' + item.uid + '\')">×</button>';
+        frag.appendChild(div);
+    });
+    panel.innerHTML = ''; panel.appendChild(frag);
 }
 
-// ── Search / filter ────────────────────────────────────────────────────────
-function filterAvail(type) { renderAvail(type); }
-function filterSel(type)   { renderSel(type);   }
-function clearSearch(type) {
-    document.getElementById(type === 'de' ? 'deAvailSearch' : 'indAvailSearch').value = '';
-    renderAvail(type);
-}
-function clearSelSearch(type) {
-    document.getElementById(type === 'de' ? 'deSelSearch' : 'indSelSearch').value = '';
-    renderSel(type);
+function addInd(uid) { const i = allIndicators.find(x => x.uid === uid); if (i && !selInd.has(uid)) { selInd.set(uid, i); renderIndAvail(); renderIndSel(); } }
+function removeInd(uid) { selInd.delete(uid); renderIndAvail(); renderIndSel(); }
+function addAllInd() {
+    const search = document.getElementById('indAvailSearch').value.toLowerCase();
+    allIndicators.filter(i => !selInd.has(i.uid) && (!search || i.name.toLowerCase().includes(search))).forEach(i => selInd.set(i.uid, i));
+    renderIndAvail(); renderIndSel();
 }
 
-// ── Reset all ──────────────────────────────────────────────────────────────
+// ── Reset ──────────────────────────────────────────────────────────────────
 function resetAll() {
     selDE.clear(); selInd.clear(); openGroups.clear();
-    ['deAvailSearch','deSelSearch','indAvailSearch','indSelSearch'].forEach(id => {
-        document.getElementById(id).value = '';
-    });
-    renderAvail('de'); renderSel('de');
-    renderAvail('ind'); renderSel('ind');
-    notify('All selections cleared', 'info');
+    ['deAvailSearch','deSelSearch','indAvailSearch','indSelSearch'].forEach(id => document.getElementById(id).value = '');
+    renderDeAvail(); renderDeSel(); renderIndAvail(); renderIndSel();
+    notify('Variable selections cleared', 'info');
 }
 
-// ── Export helpers ─────────────────────────────────────────────────────────
-// DE export: one parent row per DE, then one child row per category option combo
-// Columns: Row Type | Data Element Name | Data Element UID | COC Name | COC UID | Dataset Name | Dataset UID | Period Type | Category Combo
+// ══════════════════════════════════════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════════════════════════════════════
 function buildDERows() {
     const rows = [];
-    // Sort by dataset then DE name
-    const sorted = Array.from(selDE.values()).sort((a, b) => {
-        const d = a.datasetName.localeCompare(b.datasetName);
-        return d !== 0 ? d : a.name.localeCompare(b.name);
-    });
+    const sorted = Array.from(selDE.values()).sort((a,b) => { const d = a.datasetName.localeCompare(b.datasetName); return d !== 0 ? d : a.name.localeCompare(b.name); });
     sorted.forEach(item => {
-        // Parent row — DE UID in UID column, COC columns empty
+        // Parent row — DE UID, no COC columns
         rows.push(['Data Element', item.name, item.uid, '', '', item.datasetName, item.datasetUid, item.periodType, item.categoryComboName]);
-        // Child rows — COC name and COC UID in their own columns, DE UID column empty
+        // Child rows — COC UID only, DE UID column empty
         if (item.cocs && item.cocs.length > 0) {
             const isDefault = item.cocs.length === 1 && item.cocs[0].name.toLowerCase() === 'default';
             item.cocs.forEach(coc => {
@@ -759,66 +879,47 @@ function buildDERows() {
 }
 
 function buildIndRows() {
-    const rows = [];
-    selInd.forEach(item => {
-        rows.push([item.name, item.uid, item.type, item.annualized, item.numDesc, item.denDesc, item.numerator, item.denominator]);
-    });
-    rows.sort((a,b) => a[0].localeCompare(b[0]));
-    return rows;
+    return Array.from(selInd.values())
+        .sort((a,b) => a.name.localeCompare(b.name))
+        .map(i => [i.name, i.uid, i.type, i.annualized, i.numDesc, i.denDesc, i.numerator, i.denominator]);
 }
 
-// ── Excel export ───────────────────────────────────────────────────────────
 function exportExcel() {
-    const deRows  = buildDERows();
-    const indRows = buildIndRows();
+    const deRows = buildDERows(), indRows = buildIndRows();
     if (!deRows.length && !indRows.length) { notify('No items selected', 'error'); return; }
-
     const wb = XLSX.utils.book_new();
-
     if (deRows.length) {
-        const headers = ['Row Type', 'Data Element Name', 'Data Element UID', 'Category Option Combo', 'COC UID', 'Dataset Name', 'Dataset UID', 'Period Type', 'Category Combo'];
-        const ws = XLSX.utils.aoa_to_sheet([headers, ...deRows]);
-        ws['!cols'] = [{ wch: 22 }, { wch: 55 }, { wch: 14 }, { wch: 40 }, { wch: 14 }, { wch: 40 }, { wch: 14 }, { wch: 14 }, { wch: 25 }];
+        const ws = XLSX.utils.aoa_to_sheet([['Row Type','Data Element Name','Data Element UID','Category Option Combo','COC UID','Dataset Name','Dataset UID','Period Type','Category Combo'], ...deRows]);
+        ws['!cols'] = [{wch:22},{wch:55},{wch:14},{wch:40},{wch:14},{wch:40},{wch:14},{wch:14},{wch:25}];
         XLSX.utils.book_append_sheet(wb, ws, 'Data Elements');
     }
     if (indRows.length) {
-        const headers = ['Indicator Name', 'Indicator UID', 'Indicator Type', 'Annualized', 'Numerator Description', 'Denominator Description', 'Numerator Expression', 'Denominator Expression'];
-        const ws = XLSX.utils.aoa_to_sheet([headers, ...indRows]);
-        ws['!cols'] = [{ wch: 55 }, { wch: 14 }, { wch: 25 }, { wch: 12 }, { wch: 35 }, { wch: 35 }, { wch: 50 }, { wch: 50 }];
+        const ws = XLSX.utils.aoa_to_sheet([['Indicator Name','Indicator UID','Indicator Type','Annualized','Numerator Description','Denominator Description','Numerator Expression','Denominator Expression'], ...indRows]);
+        ws['!cols'] = [{wch:55},{wch:14},{wch:25},{wch:12},{wch:35},{wch:35},{wch:50},{wch:50}];
         XLSX.utils.book_append_sheet(wb, ws, 'Indicators');
     }
-
-    const filename = 'dhis2-metadata-' + new Date().toISOString().split('T')[0] + '.xlsx';
-    XLSX.writeFile(wb, filename);
-    notify('Excel downloaded: ' + filename, 'success');
+    XLSX.writeFile(wb, 'dhis2-metadata-' + new Date().toISOString().split('T')[0] + '.xlsx');
+    notify('Excel downloaded', 'success');
 }
 
-// ── CSV export ─────────────────────────────────────────────────────────────
 function exportCSV() {
-    const deRows  = buildDERows();
-    const indRows = buildIndRows();
+    const deRows = buildDERows(), indRows = buildIndRows();
     if (!deRows.length && !indRows.length) { notify('No items selected', 'error'); return; }
-
     let csv = '';
-
+    const q = v => '"' + String(v||'').replace(/"/g,'""') + '"';
     if (deRows.length) {
         csv += 'Row Type,Data Element Name,Data Element UID,Category Option Combo,COC UID,Dataset Name,Dataset UID,Period Type,Category Combo\r\n';
-        deRows.forEach(r => { csv += r.map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(',') + '\r\n'; });
+        deRows.forEach(r => { csv += r.map(q).join(',') + '\r\n'; });
     }
-
     if (indRows.length) {
-        if (csv) csv += '\r\n'; // blank line separator
+        if (csv) csv += '\r\n';
         csv += 'Indicator Name,Indicator UID,Indicator Type,Annualized,Numerator Description,Denominator Description,Numerator Expression,Denominator Expression\r\n';
-        indRows.forEach(r => { csv += r.map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(',') + '\r\n'; });
+        indRows.forEach(r => { csv += r.map(q).join(',') + '\r\n'; });
     }
-
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
     a.download = 'dhis2-metadata-' + new Date().toISOString().split('T')[0] + '.csv';
     a.click();
-    URL.revokeObjectURL(url);
     notify('CSV downloaded', 'success');
 }
 </script>
