@@ -113,6 +113,15 @@
         .type-tab .badge { display: inline-block; background: #ffc107; color: #000; border-radius: 10px; padding: 1px 8px; font-size: 11px; margin-left: 6px; }
         .type-tab.active .badge { background: #fff; color: #004080; }
 
+        /* ORG UNIT LEVELS (step 4) */
+        .level-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+        .level-chip { display: flex; align-items: center; gap: 8px; padding: 9px 16px; background: #fff; border: 2px solid #004080; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 700; color: #004080; user-select: none; transition: all 0.2s; }
+        .level-chip:hover { background: #e7f3ff; }
+        .level-chip.checked { background: #004080; color: #fff; }
+        .level-chip input { width: 16px; height: 16px; cursor: pointer; accent-color: #ffc107; }
+        .level-num { background: #ffc107; color: #000; border-radius: 10px; padding: 1px 8px; font-size: 11px; }
+        .ou-summary { font-size: 12px; color: #004080; margin-top: 8px; line-height: 1.7; }
+
         /* BUTTONS */
         .btn-gold { padding: 13px 28px; background: #ffc107; color: #000; border: 2px solid #ffc107; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Oswald', Arial, sans-serif; transition: all 0.3s; }
         .btn-gold:hover { background: #e0a800; }
@@ -167,7 +176,7 @@
         </div>
         <div class="login-header">
             <h1>DHIS2 METADATA EXPORT</h1>
-            <p>Select Datasets · Data Elements · Indicators</p>
+            <p>Select Datasets · Data Elements · Indicators · Org Units</p>
         </div>
         <div class="form-group">
             <label class="form-label">DHIS2 Instance URL</label>
@@ -197,7 +206,7 @@
             <h3>Informatics Consultancy Firm-Sierra Leone (ICF-SL)</h3>
             <p class="tagline">Driving Data-Driven Solutions for Health and Development</p>
             <h1>DHIS2 METADATA EXPORT TOOL</h1>
-            <p class="subtitle">Step-by-step: Pick Datasets → Fetch Data Elements → Select & Export</p>
+            <p class="subtitle">Step-by-step: Pick Datasets → Fetch Data Elements → Select Variables → Extract Org Units → Export</p>
         </div>
 
         <div class="content-card">
@@ -222,7 +231,6 @@
 
                 <div id="dsPanel" style="display:none;">
                     <div class="dual-panel">
-                        <!-- Available datasets -->
                         <div class="panel">
                             <div class="panel-header">
                                 <span class="panel-title">Available Datasets</span>
@@ -239,7 +247,6 @@
                                 <p style="color:#999;text-align:center;padding:20px;font-size:13px;">Click "Load Datasets" to start</p>
                             </div>
                         </div>
-                        <!-- Selected datasets -->
                         <div class="panel">
                             <div class="panel-header">
                                 <span class="panel-title">Selected Datasets</span>
@@ -261,7 +268,7 @@
 
                 <hr class="step-divider">
 
-                <!-- ══ STEP 2: FETCH DATA ELEMENTS FOR SELECTED DATASETS ══ -->
+                <!-- ══ STEP 2: FETCH DATA ELEMENTS ══ -->
                 <div class="section-header">
                     <span class="section-icon">2</span>
                     <span class="section-title">FETCH DATA ELEMENTS</span>
@@ -293,7 +300,6 @@
                     <span class="section-title">SELECT VARIABLES TO EXPORT</span>
                 </div>
 
-                <!-- Tab switcher -->
                 <div class="type-tabs">
                     <div class="type-tab active" id="tabDE" onclick="switchType('de')">
                         Data Elements <span class="badge" id="badgeDE">0</span>
@@ -303,7 +309,6 @@
                     </div>
                 </div>
 
-                <!-- DATA ELEMENTS panels -->
                 <div id="paneDE">
                     <div class="dual-panel">
                         <div class="panel">
@@ -341,7 +346,6 @@
                     </div>
                 </div>
 
-                <!-- INDICATORS panels -->
                 <div id="paneInd" style="display:none;">
                     <div class="dual-panel">
                         <div class="panel">
@@ -379,6 +383,33 @@
                     </div>
                 </div>
 
+                <hr class="step-divider">
+
+                <!-- ══ STEP 4: EXTRACT ORG UNITS ══ -->
+                <div class="section-header">
+                    <span class="section-icon">4</span>
+                    <span class="section-title">EXTRACT ORGANISATION UNITS</span>
+                    <span class="section-subtitle">Pick the levels you need, then fetch</span>
+                </div>
+
+                <div class="btn-inline-row">
+                    <button class="btn-secondary" id="loadLvlBtn" onclick="loadOrgUnitLevels()">Load Org Unit Levels</button>
+                    <span id="lvlStatus" style="font-size:12px;color:#666;"></span>
+                </div>
+
+                <div id="levelGrid" class="level-grid"></div>
+
+                <div class="btn-inline-row">
+                    <button class="btn-gold" id="fetchOuBtn" onclick="fetchOrgUnits()" disabled>Fetch Org Units</button>
+                    <span id="ouStatus" style="font-size:12px;color:#666;"></span>
+                </div>
+
+                <div class="progress-wrap" id="ouProgressWrap" style="display:none;">
+                    <div class="progress-bar"><div class="progress-fill" id="ouProgress" style="width:0%">0%</div></div>
+                    <div class="log-box" id="ouLog"></div>
+                </div>
+                <div class="ou-summary" id="ouSummary"></div>
+
                 <!-- EXPORT BUTTONS -->
                 <div class="btn-row">
                     <button class="btn-gold" onclick="exportExcel()">⬇ Download Excel (.xlsx)</button>
@@ -404,16 +435,18 @@ const PROXY = 'https://script.google.com/macros/s/AKfycbyRXc68PYSmDSCYPakAS8Gc9R
 let cfg = null;
 
 // Raw data
-let allDatasets   = [];  // [{uid, name, periodType}]
-let allDataElements = []; // [{key, uid, name, datasetUid, datasetName, periodType, categoryComboName, cocs:[{id,name}]}]
-let allIndicators = [];  // [{uid, name, type, annualized, numDesc, denDesc, numerator, denominator}]
+let allDatasets     = [];  // [{uid, name, periodType}]
+let allDataElements = [];  // [{key, uid, name, datasetUid, datasetName, periodType, categoryComboName, cocs:[{id,name}]}]
+let allIndicators   = [];  // [{uid, name, type, annualized, numDesc, denDesc, numerator, denominator}]
+let allLevels       = [];  // [{level, name, uid}]
+let allOrgUnits     = [];  // [{level, levelName, name, uid, code, parentName, parentUid, ancestors:{level:{name,uid}}}]
 
 // Selections
-let selDs  = new Map(); // uid -> dataset object
-let selDE  = new Map(); // key (deUid|dsUid) -> de object
-let selInd = new Map(); // uid -> indicator object
+let selDs     = new Map();
+let selDE     = new Map();
+let selInd    = new Map();
+let selLevels = new Set(); // level numbers
 
-// Open group state for DE available panel
 const openGroups = new Set();
 
 // ── Utility ────────────────────────────────────────────────────────────────
@@ -431,6 +464,7 @@ function logTo(boxId, msg, type = 'info') {
 }
 function setProgress(fillId, pct) {
     const f = document.getElementById(fillId);
+    pct = Math.min(100, Math.max(0, pct));
     f.style.width = pct + '%'; f.textContent = pct + '%';
 }
 function proxyFetch(url) {
@@ -475,7 +509,6 @@ async function loadDatasets() {
     try {
         logTo('dsLog', 'Fetching dataset list...', 'info');
         setProgress('dsProgress', 20);
-        // Only fetch id, displayName, periodType — no dataSetElements yet
         const r = await proxyFetch(cfg.instanceUrl + '/api/dataSets.json?fields=id,displayName,periodType&paging=false');
         if (!r.ok) throw new Error('HTTP ' + r.status);
         const data = await r.json();
@@ -520,7 +553,6 @@ function renderDsSel() {
     const panel   = document.getElementById('dsSelPanel');
     const items   = Array.from(selDs.values()).filter(ds => !search || ds.name.toLowerCase().includes(search));
     document.getElementById('dsSelCount').textContent = selDs.size;
-    // Enable/disable the fetch DE button
     document.getElementById('fetchDeBtn').disabled = selDs.size === 0;
     if (!items.length) { panel.innerHTML = '<p style="color:#999;text-align:center;padding:20px;font-size:13px;">No datasets selected</p>'; return; }
     const frag = document.createDocumentFragment();
@@ -533,7 +565,6 @@ function renderDsSel() {
         frag.appendChild(div);
     });
     panel.innerHTML = ''; panel.appendChild(frag);
-    // Update info box
     document.getElementById('deInfoBox').innerHTML =
         '<strong>' + selDs.size + ' dataset(s) selected.</strong> Click "Fetch Data Elements" to load only their elements.';
 }
@@ -549,7 +580,7 @@ function addAllDs() {
 function clearAllDs() { selDs.clear(); renderDsAvail(); renderDsSel(); }
 
 // ══════════════════════════════════════════════════════════════════════════
-// STEP 2a — FETCH DATA ELEMENTS (only for selected datasets)
+// STEP 2a — FETCH DATA ELEMENTS
 // ══════════════════════════════════════════════════════════════════════════
 async function fetchDataElements() {
     if (!cfg) { notify('Not connected', 'error'); return; }
@@ -568,8 +599,6 @@ async function fetchDataElements() {
         logTo('deLog', 'Fetching data elements for ' + selectedDsUids.length + ' dataset(s)...', 'info');
         setProgress('deProgress', 5);
 
-        // Fetch full dataset detail (with dataSetElements) only for selected datasets
-        // Use filter=id:in:[...] to batch if needed, but datasets are few so one call is fine
         const dsFilter = 'filter=id:in:[' + selectedDsUids.join(',') + ']';
         const r = await proxyFetch(cfg.instanceUrl + '/api/dataSets.json?' + dsFilter + '&fields=id,displayName,periodType,dataSetElements[dataElement[id,displayName]]&paging=false');
         if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -578,15 +607,13 @@ async function fetchDataElements() {
         setProgress('deProgress', 25);
         logTo('deLog', 'Dataset details loaded. Collecting data element UIDs...', 'info');
 
-        // Collect all unique DE UIDs across selected datasets
         const deUidSet = new Set();
         datasets.forEach(ds => { (ds.dataSetElements || []).forEach(dse => { if (dse.dataElement) deUidSet.add(dse.dataElement.id); }); });
         const deUidArr = Array.from(deUidSet);
         logTo('deLog', deUidArr.length + ' unique data elements found. Fetching category combos...', 'info');
         setProgress('deProgress', 30);
 
-        // Fetch category combos in batches of 100
-        const cocMap = new Map(); // deUid -> {categoryComboName, cocs:[{id,name}]}
+        const cocMap = new Map();
         const batchSize = 100;
         for (let i = 0; i < deUidArr.length; i += batchSize) {
             const batch = deUidArr.slice(i, i + batchSize).join(',');
@@ -605,9 +632,6 @@ async function fetchDataElements() {
         }
         logTo('deLog', 'Category combos loaded for ' + cocMap.size + ' elements.', 'success');
 
-        // Build one entry per DE+dataset (key = deUid|dsUid)
-        // Track which DE UIDs we have already seen — first dataset that provides a DE wins
-        // (but we show all copies so user can pick the dataset they want)
         datasets.forEach(ds => {
             const dsName = ds.displayName || ds.id;
             (ds.dataSetElements || []).forEach(dse => {
@@ -616,14 +640,14 @@ async function fetchDataElements() {
                 const name  = dse.dataElement.displayName || uid;
                 const cInfo = cocMap.get(uid) || { categoryComboName: '', cocs: [] };
                 allDataElements.push({
-                    key:              uid + '|' + ds.id,
+                    key:               uid + '|' + ds.id,
                     uid,
                     name,
-                    datasetUid:       ds.id,
-                    datasetName:      dsName,
-                    periodType:       ds.periodType || '',
+                    datasetUid:        ds.id,
+                    datasetName:       dsName,
+                    periodType:        ds.periodType || '',
                     categoryComboName: cInfo.categoryComboName,
-                    cocs:             cInfo.cocs
+                    cocs:              cInfo.cocs
                 });
             });
         });
@@ -705,7 +729,6 @@ function switchType(type) {
     document.getElementById('tabInd').classList.toggle('active', type === 'ind');
 }
 
-// ── Data Elements ──────────────────────────────────────────────────────────
 function renderDeAvail() {
     const search = document.getElementById('deAvailSearch').value.toLowerCase();
     const panel  = document.getElementById('deAvailPanel');
@@ -722,7 +745,6 @@ function renderDeAvail() {
         return;
     }
 
-    // Group by dataset
     const byDataset = new Map();
     visible.forEach(item => {
         if (!byDataset.has(item.datasetName)) byDataset.set(item.datasetName, []);
@@ -786,7 +808,6 @@ function renderDeSel() {
 function addDe(key) {
     const item = allDataElements.find(i => i.key === key);
     if (!item || selDE.has(key)) return;
-    // Remove any other dataset copies of the same DE first
     for (const [k, v] of selDE) { if (v.uid === item.uid) selDE.delete(k); }
     selDE.set(key, item);
     renderDeAvail(); renderDeSel();
@@ -797,13 +818,11 @@ function addAllDe() {
     const selectedDeUids = new Set(Array.from(selDE.values()).map(i => i.uid));
     allDataElements.filter(i => !selectedDeUids.has(i.uid) && (!search || i.name.toLowerCase().includes(search)))
         .forEach(item => {
-            // If multiple datasets have this DE, take first one encountered (i.e. first in sorted list)
             if (!Array.from(selDE.values()).some(s => s.uid === item.uid)) selDE.set(item.key, item);
         });
     renderDeAvail(); renderDeSel();
 }
 
-// ── Indicators ─────────────────────────────────────────────────────────────
 function renderIndAvail() {
     const search  = document.getElementById('indAvailSearch').value.toLowerCase();
     const panel   = document.getElementById('indAvailPanel');
@@ -849,12 +868,153 @@ function addAllInd() {
     renderIndAvail(); renderIndSel();
 }
 
+// ══════════════════════════════════════════════════════════════════════════
+// STEP 4 — ORG UNITS BY LEVEL
+// ══════════════════════════════════════════════════════════════════════════
+async function loadOrgUnitLevels() {
+    if (!cfg) { notify('Not connected', 'error'); return; }
+    const btn = document.getElementById('loadLvlBtn');
+    btn.disabled = true; btn.textContent = 'Loading...';
+    try {
+        const r = await proxyFetch(cfg.instanceUrl + '/api/organisationUnitLevels.json?fields=id,displayName,level&paging=false');
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const data = await r.json();
+        allLevels = (data.organisationUnitLevels || [])
+            .map(l => ({ level: l.level, name: l.displayName || ('Level ' + l.level), uid: l.id }))
+            .sort((a,b) => a.level - b.level);
+        selLevels.clear();
+        renderLevels();
+        document.getElementById('lvlStatus').textContent = allLevels.length + ' levels found. Tick the ones you want.';
+        notify('Org unit levels loaded: ' + allLevels.length, 'success');
+    } catch(e) {
+        notify('Failed to load levels: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false; btn.textContent = 'Reload Org Unit Levels';
+    }
+}
+
+function renderLevels() {
+    const grid = document.getElementById('levelGrid');
+    grid.innerHTML = '';
+    allLevels.forEach(l => {
+        const chip = document.createElement('label');
+        chip.className = 'level-chip' + (selLevels.has(l.level) ? ' checked' : '');
+        chip.innerHTML = '<input type="checkbox"' + (selLevels.has(l.level) ? ' checked' : '') + '>' +
+            '<span class="level-num">L' + l.level + '</span><span>' + esc(l.name) + '</span>';
+        chip.querySelector('input').onchange = (e) => {
+            if (e.target.checked) selLevels.add(l.level); else selLevels.delete(l.level);
+            chip.classList.toggle('checked', e.target.checked);
+            document.getElementById('fetchOuBtn').disabled = selLevels.size === 0;
+        };
+        grid.appendChild(chip);
+    });
+    document.getElementById('fetchOuBtn').disabled = selLevels.size === 0;
+}
+
+function levelName(n) { const l = allLevels.find(x => x.level === n); return l ? l.name : ('Level ' + n); }
+
+async function fetchOrgUnits() {
+    if (!cfg) { notify('Not connected', 'error'); return; }
+    if (!selLevels.size) { notify('Select at least one level', 'error'); return; }
+    const btn = document.getElementById('fetchOuBtn');
+    btn.disabled = true; btn.textContent = 'Fetching...';
+    document.getElementById('ouProgressWrap').style.display = 'block';
+    document.getElementById('ouLog').innerHTML = '';
+    document.getElementById('ouSummary').innerHTML = '';
+    setProgress('ouProgress', 0);
+    allOrgUnits = [];
+
+    try {
+        const levels = Array.from(selLevels).sort((a,b) => a - b);
+        for (let i = 0; i < levels.length; i++) {
+            const lv = levels[i];
+            logTo('ouLog', 'Fetching ' + levelName(lv) + ' (level ' + lv + ')...', 'info');
+            const url = cfg.instanceUrl + '/api/organisationUnits.json?filter=level:eq:' + lv +
+                '&fields=id,displayName,code,level,parent[id,displayName],ancestors[id,displayName,level]&paging=false';
+            const r = await proxyFetch(url);
+            if (!r.ok) throw new Error('HTTP ' + r.status + ' on level ' + lv);
+            const data = await r.json();
+            const ous = data.organisationUnits || [];
+            ous.forEach(ou => {
+                const anc = {};
+                (ou.ancestors || []).forEach(a => { anc[a.level] = { name: a.displayName || a.id, uid: a.id }; });
+                allOrgUnits.push({
+                    level:      ou.level || lv,
+                    levelName:  levelName(ou.level || lv),
+                    name:       ou.displayName || ou.id,
+                    uid:        ou.id,
+                    code:       ou.code || '',
+                    parentName: ou.parent ? (ou.parent.displayName || ou.parent.id) : '',
+                    parentUid:  ou.parent ? ou.parent.id : '',
+                    ancestors:  anc
+                });
+            });
+            logTo('ouLog', levelName(lv) + ': ' + ous.length + ' org units', 'success');
+            setProgress('ouProgress', Math.round(((i + 1) / levels.length) * 100));
+        }
+
+        // Sort by level, then by full hierarchy path, then name
+        allOrgUnits.sort((a,b) => {
+            if (a.level !== b.level) return a.level - b.level;
+            const pa = ouPath(a), pb = ouPath(b);
+            return pa.localeCompare(pb);
+        });
+
+        const counts = Array.from(selLevels).sort((a,b) => a - b)
+            .map(lv => '<strong>' + esc(levelName(lv)) + ':</strong> ' + allOrgUnits.filter(o => o.level === lv).length);
+        document.getElementById('ouSummary').innerHTML = counts.join(' &nbsp;|&nbsp; ');
+        document.getElementById('ouStatus').textContent = allOrgUnits.length + ' org units ready for export';
+        notify('Org units loaded: ' + allOrgUnits.length, 'success');
+    } catch(e) {
+        logTo('ouLog', 'ERROR: ' + e.message, 'error');
+        notify('Failed: ' + e.message, 'error');
+    } finally {
+        btn.disabled = selLevels.size === 0; btn.textContent = 'Re-fetch Org Units';
+    }
+}
+
+function ouPath(o) {
+    const parts = [];
+    for (let l = 1; l < o.level; l++) parts.push(o.ancestors[l] ? o.ancestors[l].name : '');
+    parts.push(o.name);
+    return parts.join(' / ');
+}
+
+// Hierarchy columns run from level 1 up to one level above the deepest level fetched
+function ouHierLevels() {
+    if (!allOrgUnits.length) return [];
+    const maxLv = Math.max(...allOrgUnits.map(o => o.level));
+    return allLevels.filter(l => l.level < maxLv).map(l => l.level);
+}
+
+function buildOuHeader() {
+    const h = ['Level', 'Level Name', 'Org Unit Name', 'Org Unit UID', 'Org Unit Code', 'Parent Name', 'Parent UID'];
+    ouHierLevels().forEach(lv => { h.push(levelName(lv)); h.push(levelName(lv) + ' UID'); });
+    return h;
+}
+
+function buildOuRows() {
+    const hier = ouHierLevels();
+    return allOrgUnits.map(o => {
+        const row = [o.level, o.levelName, o.name, o.uid, o.code, o.parentName, o.parentUid];
+        hier.forEach(lv => {
+            const a = o.ancestors[lv];
+            row.push(a ? a.name : ''); row.push(a ? a.uid : '');
+        });
+        return row;
+    });
+}
+
 // ── Reset ──────────────────────────────────────────────────────────────────
 function resetAll() {
     selDE.clear(); selInd.clear(); openGroups.clear();
+    selLevels.clear(); allOrgUnits = [];
     ['deAvailSearch','deSelSearch','indAvailSearch','indSelSearch'].forEach(id => document.getElementById(id).value = '');
-    renderDeAvail(); renderDeSel(); renderIndAvail(); renderIndSel();
-    notify('Variable selections cleared', 'info');
+    renderDeAvail(); renderDeSel(); renderIndAvail(); renderIndSel(); renderLevels();
+    document.getElementById('ouSummary').innerHTML = '';
+    document.getElementById('ouStatus').textContent = '';
+    document.getElementById('ouProgressWrap').style.display = 'none';
+    notify('Selections cleared', 'info');
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -864,14 +1024,14 @@ function buildDERows() {
     const rows = [];
     const sorted = Array.from(selDE.values()).sort((a,b) => { const d = a.datasetName.localeCompare(b.datasetName); return d !== 0 ? d : a.name.localeCompare(b.name); });
     sorted.forEach(item => {
-        // Parent row — DE UID, no COC columns
+        // Parent row
         rows.push(['Data Element', item.name, item.uid, '', '', item.datasetName, item.datasetUid, item.periodType, item.categoryComboName]);
-        // Child rows — COC UID only, DE UID column empty
+        // Child rows: DE UID filled on every COC row
         if (item.cocs && item.cocs.length > 0) {
             const isDefault = item.cocs.length === 1 && item.cocs[0].name.toLowerCase() === 'default';
             item.cocs.forEach(coc => {
                 const childName = isDefault ? item.name : (item.name + ' (' + coc.name + ')');
-                rows.push(['Category Option Combo', childName, '', coc.name, coc.id, item.datasetName, item.datasetUid, item.periodType, item.categoryComboName]);
+                rows.push(['Category Option Combo', childName, item.uid, coc.name, coc.id, item.datasetName, item.datasetUid, item.periodType, item.categoryComboName]);
             });
         }
     });
@@ -885,8 +1045,8 @@ function buildIndRows() {
 }
 
 function exportExcel() {
-    const deRows = buildDERows(), indRows = buildIndRows();
-    if (!deRows.length && !indRows.length) { notify('No items selected', 'error'); return; }
+    const deRows = buildDERows(), indRows = buildIndRows(), ouRows = buildOuRows();
+    if (!deRows.length && !indRows.length && !ouRows.length) { notify('No items selected', 'error'); return; }
     const wb = XLSX.utils.book_new();
     if (deRows.length) {
         const ws = XLSX.utils.aoa_to_sheet([['Row Type','Data Element Name','Data Element UID','Category Option Combo','COC UID','Dataset Name','Dataset UID','Period Type','Category Combo'], ...deRows]);
@@ -898,15 +1058,21 @@ function exportExcel() {
         ws['!cols'] = [{wch:55},{wch:14},{wch:25},{wch:12},{wch:35},{wch:35},{wch:50},{wch:50}];
         XLSX.utils.book_append_sheet(wb, ws, 'Indicators');
     }
+    if (ouRows.length) {
+        const header = buildOuHeader();
+        const ws = XLSX.utils.aoa_to_sheet([header, ...ouRows]);
+        ws['!cols'] = header.map((h, i) => ({ wch: i === 0 ? 8 : (h.endsWith('UID') || h === 'Org Unit Code' ? 14 : 30) }));
+        XLSX.utils.book_append_sheet(wb, ws, 'Org Units');
+    }
     XLSX.writeFile(wb, 'dhis2-metadata-' + new Date().toISOString().split('T')[0] + '.xlsx');
     notify('Excel downloaded', 'success');
 }
 
 function exportCSV() {
-    const deRows = buildDERows(), indRows = buildIndRows();
-    if (!deRows.length && !indRows.length) { notify('No items selected', 'error'); return; }
+    const deRows = buildDERows(), indRows = buildIndRows(), ouRows = buildOuRows();
+    if (!deRows.length && !indRows.length && !ouRows.length) { notify('No items selected', 'error'); return; }
     let csv = '';
-    const q = v => '"' + String(v||'').replace(/"/g,'""') + '"';
+    const q = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
     if (deRows.length) {
         csv += 'Row Type,Data Element Name,Data Element UID,Category Option Combo,COC UID,Dataset Name,Dataset UID,Period Type,Category Combo\r\n';
         deRows.forEach(r => { csv += r.map(q).join(',') + '\r\n'; });
@@ -916,8 +1082,13 @@ function exportCSV() {
         csv += 'Indicator Name,Indicator UID,Indicator Type,Annualized,Numerator Description,Denominator Description,Numerator Expression,Denominator Expression\r\n';
         indRows.forEach(r => { csv += r.map(q).join(',') + '\r\n'; });
     }
+    if (ouRows.length) {
+        if (csv) csv += '\r\n';
+        csv += buildOuHeader().map(q).join(',') + '\r\n';
+        ouRows.forEach(r => { csv += r.map(q).join(',') + '\r\n'; });
+    }
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
+    a.href = URL.createObjectURL(new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'}));
     a.download = 'dhis2-metadata-' + new Date().toISOString().split('T')[0] + '.csv';
     a.click();
     notify('CSV downloaded', 'success');
