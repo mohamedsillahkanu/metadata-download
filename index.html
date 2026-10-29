@@ -6,6 +6,7 @@
     <title>DHIS2 Metadata Export</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #f0f4f8; font-family: 'Oswald', Arial, sans-serif; color: #000; font-weight: 500; min-height: 100vh; }
@@ -401,6 +402,9 @@
 
                 <div class="btn-inline-row">
                     <button class="btn-gold" id="fetchOuBtn" onclick="fetchOrgUnits()" disabled>Fetch Org Units</button>
+                    <label style="font-size:13px;color:#004080;display:flex;align-items:center;gap:6px;cursor:pointer;">
+                        <input type="checkbox" id="ouGeometry" style="width:16px;height:16px;accent-color:#004080;"> Include boundaries (geometry) for import
+                    </label>
                     <span id="ouStatus" style="font-size:12px;color:#666;"></span>
                 </div>
 
@@ -410,8 +414,29 @@
                 </div>
                 <div class="ou-summary" id="ouSummary"></div>
 
+                <div class="info-box" style="margin-top:24px;">
+                    <strong>Import ZIP:</strong> uses the datasets selected in Step 1 and the org units fetched in Step 4.
+                    Files are numbered in the order to import them in the target DHIS2 (Import/Export app &gt; Metadata import, JSON, Identifier: UID).
+                    Org units come first, one file per level, then each dataset dependency type in turn.
+                </div>
+                <div class="section-header" style="margin-top:6px;">
+                    <span class="section-icon">5</span>
+                    <span class="section-title">TARGET DHIS2 (where you will import)</span>
+                    <span class="section-subtitle">Objects that already exist there are reused, not duplicated</span>
+                </div>
+                <div class="dual-panel" style="grid-template-columns:2fr 1fr 1fr;margin-bottom:14px;">
+                    <div class="form-group" style="margin:0;"><label class="form-label">Target Instance URL</label><input type="url" class="form-input" id="tgtUrl" placeholder="https://your-target-dhis2.org"></div>
+                    <div class="form-group" style="margin:0;"><label class="form-label">Username</label><input type="text" class="form-input" id="tgtUser"></div>
+                    <div class="form-group" style="margin:0;"><label class="form-label">Password</label><input type="password" class="form-input" id="tgtPass"></div>
+                </div>
+                <div class="progress-wrap" id="zipProgressWrap" style="display:none;">
+                    <div class="progress-bar"><div class="progress-fill" id="zipProgress" style="width:0%">0%</div></div>
+                    <div class="log-box" id="zipLog"></div>
+                </div>
+
                 <!-- EXPORT BUTTONS -->
                 <div class="btn-row">
+                    <button class="btn-gold" id="zipBtn" onclick="exportImportZip()" style="background:#28a745;border-color:#28a745;color:#fff;">⬇ Download Import ZIP (JSON by type)</button>
                     <button class="btn-gold" onclick="exportExcel()">⬇ Download Excel (.xlsx)</button>
                     <button class="btn-secondary" onclick="exportCSV()">⬇ Download CSV</button>
                     <button class="btn-reset" onclick="resetAll()">Reset All</button>
@@ -930,7 +955,8 @@ async function fetchOrgUnits() {
             const lv = levels[i];
             logTo('ouLog', 'Fetching ' + levelName(lv) + ' (level ' + lv + ')...', 'info');
             const url = cfg.instanceUrl + '/api/organisationUnits.json?filter=level:eq:' + lv +
-                '&fields=id,displayName,code,level,parent[id,displayName],ancestors[id,displayName,level]&paging=false';
+                '&fields=id,displayName,name,shortName,code,description,openingDate,closedDate,level,parent[id,displayName],ancestors[id,displayName,level]' +
+                (document.getElementById('ouGeometry').checked ? ',geometry' : '') + '&paging=false';
             const r = await proxyFetch(url);
             if (!r.ok) throw new Error('HTTP ' + r.status + ' on level ' + lv);
             const data = await r.json();
@@ -946,7 +972,8 @@ async function fetchOrgUnits() {
                     code:       ou.code || '',
                     parentName: ou.parent ? (ou.parent.displayName || ou.parent.id) : '',
                     parentUid:  ou.parent ? ou.parent.id : '',
-                    ancestors:  anc
+                    ancestors:  anc,
+                    raw:        ouImportObject(ou)
                 });
             });
             logTo('ouLog', levelName(lv) + ': ' + ous.length + ' org units', 'success');
@@ -1092,6 +1119,345 @@ function exportCSV() {
     a.download = 'dhis2-metadata-' + new Date().toISOString().split('T')[0] + '.csv';
     a.click();
     notify('CSV downloaded', 'success');
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// IMPORT ZIP (metadata JSON split by type, numbered in import order)
+// ══════════════════════════════════════════════════════════════════════════
+function ouImportObject(ou) {
+    const o = { id: ou.id, name: ou.name || ou.displayName || ou.id, shortName: (ou.shortName || ou.name || ou.displayName || ou.id).substring(0, 50) };
+    if (ou.code) o.code = ou.code;
+    if (ou.description) o.description = ou.description;
+    o.openingDate = ou.openingDate || '1970-01-01T00:00:00.000';
+    if (ou.closedDate) o.closedDate = ou.closedDate;
+    if (ou.parent && ou.parent.id) o.parent = { id: ou.parent.id };
+    if (ou.geometry) o.geometry = ou.geometry;
+    return o;
+}
+
+// Dependency order: each type only points to types listed above it
+const IMPORT_ORDER = [
+    ['attributes'],
+    ['legendSets'],
+    ['optionSets', 'options'],
+    ['categoryOptions'],
+    ['categories'],
+    ['categoryCombos'],
+    ['categoryOptionCombos'],
+    ['categoryOptionGroups'],
+    ['categoryOptionGroupSets'],
+    ['dataElements'],
+    ['dataElementGroups'],
+    ['dataElementGroupSets'],
+    ['indicatorTypes'],
+    ['indicators'],
+    ['indicatorGroups'],
+    ['dataEntryForms'],
+    ['dataSets'],
+    ['sections'],
+    ['dataApprovalLevels'],
+    ['dataApprovalWorkflows']
+];
+const SKIP_KEYS = new Set(['system', 'date']);
+const STRIP_FIELDS = new Set(['href', 'created', 'lastUpdated', 'createdBy', 'lastUpdatedBy', 'user', 'access', 'favorites',
+    'sharing', 'userAccesses', 'userGroupAccesses', 'externalAccess']);
+const DEFAULT_TYPES = new Set(['categoryOptions', 'categories', 'categoryCombos', 'categoryOptionCombos']);
+
+function cleanMeta(v) {
+    if (Array.isArray(v)) return v.map(cleanMeta);
+    if (v && typeof v === 'object') {
+        const out = {};
+        Object.keys(v).forEach(k => { if (!STRIP_FIELDS.has(k)) out[k] = cleanMeta(v[k]); });
+        return out;
+    }
+    return v;
+}
+
+// Fetch objects of one type by UID in batches, with all owner fields
+async function fetchByIds(type, ids, extraFilter) {
+    const out = [];
+    const list = Array.from(new Set(ids.filter(Boolean)));
+    for (let i = 0; i < list.length; i += 100) {
+        const batch = list.slice(i, i + 100).join(',');
+        const filter = extraFilter ? extraFilter + ':in:[' + batch + ']' : 'id:in:[' + batch + ']';
+        const r = await proxyFetch(cfg.instanceUrl + '/api/' + type + '.json?filter=' + filter + '&fields=:owner&paging=false');
+        if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching ' + type);
+        const txt = await r.text();
+        let data;
+        try { data = JSON.parse(txt); } catch(e) { throw new Error(type + ': server did not return JSON (' + txt.substring(0, 120) + ')'); }
+        if (!Array.isArray(data[type])) throw new Error(type + ': unexpected response (' + txt.substring(0, 120) + ')');
+        out.push(...data[type]);
+    }
+    return out;
+}
+
+function ref(o) { return o && o.id ? o.id : null; }
+function refs(arr) { return (arr || []).map(ref).filter(Boolean); }
+
+async function collectDatasetMetadata(dsUids, merged) {
+    const put = (type, objs) => {
+        if (!merged[type]) merged[type] = new Map();
+        objs.forEach(o => { if (o && o.id && !merged[type].has(o.id)) merged[type].set(o.id, cleanMeta(o)); });
+        logTo('zipLog', type + ': ' + objs.length, objs.length ? 'success' : 'info');
+    };
+    const step = (pct) => setProgress('zipProgress', pct);
+    const attrIds = new Set();
+    const noteAttrs = objs => objs.forEach(o => (o.attributeValues || []).forEach(av => { if (av.attribute && av.attribute.id) attrIds.add(av.attribute.id); }));
+
+    logTo('zipLog', 'Fetching ' + dsUids.length + ' dataset(s)...', 'info');
+    const dataSets = await fetchByIds('dataSets', dsUids);
+    put('dataSets', dataSets); noteAttrs(dataSets); step(10);
+
+    const deIds = [], ccIds = [], indIds = [], formIds = [], lsIds = [];
+    dataSets.forEach(ds => {
+        (ds.dataSetElements || []).forEach(dse => { deIds.push(ref(dse.dataElement)); ccIds.push(ref(dse.categoryCombo)); });
+        ccIds.push(ref(ds.categoryCombo));
+        indIds.push(...refs(ds.indicators));
+        formIds.push(ref(ds.dataEntryForm));
+        lsIds.push(...refs(ds.legendSets));
+    });
+
+    const dataElements = await fetchByIds('dataElements', deIds);
+    put('dataElements', dataElements); noteAttrs(dataElements); step(25);
+    const osIds = [];
+    dataElements.forEach(de => { ccIds.push(ref(de.categoryCombo)); osIds.push(ref(de.optionSet), ref(de.commentOptionSet)); lsIds.push(...refs(de.legendSets)); });
+
+    const categoryCombos = await fetchByIds('categoryCombos', ccIds);
+    put('categoryCombos', categoryCombos); step(35);
+    const catIds = []; categoryCombos.forEach(cc => catIds.push(...refs(cc.categories)));
+
+    const categories = await fetchByIds('categories', catIds);
+    put('categories', categories); step(45);
+    const coIds = []; categories.forEach(c => coIds.push(...refs(c.categoryOptions)));
+
+    put('categoryOptions', await fetchByIds('categoryOptions', coIds)); step(55);
+    put('categoryOptionCombos', await fetchByIds('categoryOptionCombos', categoryCombos.map(cc => cc.id), 'categoryCombo.id')); step(65);
+
+    put('optionSets', await fetchByIds('optionSets', osIds));
+    put('options', await fetchByIds('options', osIds, 'optionSet.id')); step(70);
+    put('legendSets', await fetchByIds('legendSets', lsIds)); step(73);
+
+    const indicators = await fetchByIds('indicators', indIds);
+    put('indicators', indicators); noteAttrs(indicators);
+    put('indicatorTypes', await fetchByIds('indicatorTypes', indicators.map(i => ref(i.indicatorType)))); step(78);
+
+    put('dataEntryForms', await fetchByIds('dataEntryForms', formIds)); step(82);
+    put('sections', await fetchByIds('sections', dsUids, 'dataSet.id')); step(86);
+    put('attributes', await fetchByIds('attributes', Array.from(attrIds))); step(88);
+}
+
+// ── Match export objects against the target instance ───────────────────────
+async function targetList(t, type, fields) {
+    const auth = 'Basic ' + btoa(t.username + ':' + t.password);
+    const r = await fetch(PROXY + '?url=' + encodeURIComponent(t.url + '/api/' + type + '.json?fields=' + fields + '&paging=false') + '&Authorization=' + encodeURIComponent(auth));
+    if (!r.ok) throw new Error('Target HTTP ' + r.status + ' on ' + type);
+    const txt = await r.text();
+    let d; try { d = JSON.parse(txt); } catch(e) { throw new Error('Target ' + type + ': not JSON, check URL and login (' + txt.substring(0, 100) + ')'); }
+    if (!Array.isArray(d[type])) throw new Error('Target ' + type + ': unexpected response (' + txt.substring(0, 100) + ')');
+    return d[type];
+}
+
+// Types with unique name, shortName or code, in dependency order
+const MATCH_TYPES = ['attributes','legendSets','optionSets','categoryOptions','categories','categoryCombos',
+                     'dataElements','indicatorTypes','indicators','dataEntryForms','dataSets'];
+
+async function buildTargetMap(t, merged, ouRaw) {
+    const map = new Map();
+    const norm = v => String(v || '').trim().toLowerCase();
+    const mid = id => map.get(id) || id;
+    const PROPS = ['name', 'shortName', 'code'];
+
+    for (const type of MATCH_TYPES) {
+        if (!merged[type] || !merged[type].size) continue;
+        const tgt = await targetList(t, type, 'id,name,shortName,code');
+        const ids = new Set(tgt.map(o => o.id));
+        const byKey = new Map();
+        tgt.forEach(o => PROPS.forEach(p => { if (o[p]) byKey.set(p + '|' + norm(o[p]), o.id); }));
+        let n = 0;
+        for (const [id, obj] of merged[type]) {
+            if (ids.has(id)) continue;
+            const hit = PROPS.map(p => obj[p] ? byKey.get(p + '|' + norm(obj[p])) : null).find(Boolean);
+            if (hit) { map.set(id, hit); n++; }
+        }
+        logTo('zipLog', type + ': ' + n + ' already in target', n ? 'warning' : 'info');
+    }
+
+    // Category option combos: same combo and same set of options
+    if (merged.categoryOptionCombos && merged.categoryOptionCombos.size) {
+        const tgt = await targetList(t, 'categoryOptionCombos', 'id,categoryCombo[id],categoryOptions[id]');
+        const ids = new Set(tgt.map(o => o.id));
+        const key = (cc, opts) => mid(cc) + '|' + opts.map(mid).sort().join(',');
+        const byKey = new Map();
+        tgt.forEach(o => byKey.set(key(o.categoryCombo && o.categoryCombo.id, refs(o.categoryOptions)), o.id));
+        let n = 0;
+        for (const [id, obj] of merged.categoryOptionCombos) {
+            if (ids.has(id)) continue;
+            const hit = byKey.get(key(obj.categoryCombo && obj.categoryCombo.id, refs(obj.categoryOptions)));
+            if (hit) { map.set(id, hit); n++; }
+        }
+        logTo('zipLog', 'categoryOptionCombos: ' + n + ' already in target', n ? 'warning' : 'info');
+    }
+
+    // Options: code is unique within an option set
+    if (merged.options && merged.options.size) {
+        const tgt = await targetList(t, 'options', 'id,code,optionSet[id]');
+        const ids = new Set(tgt.map(o => o.id));
+        const byKey = new Map();
+        tgt.forEach(o => { if (o.optionSet) byKey.set(o.optionSet.id + '|' + norm(o.code), o.id); });
+        let n = 0;
+        for (const [id, obj] of merged.options) {
+            if (ids.has(id) || !obj.optionSet) continue;
+            const hit = byKey.get(mid(obj.optionSet.id) + '|' + norm(obj.code));
+            if (hit) { map.set(id, hit); n++; }
+        }
+        logTo('zipLog', 'options: ' + n + ' already in target', n ? 'warning' : 'info');
+    }
+
+    // Sections: name is unique within a dataset
+    if (merged.sections && merged.sections.size) {
+        const tgt = await targetList(t, 'sections', 'id,name,dataSet[id]');
+        const ids = new Set(tgt.map(o => o.id));
+        const byKey = new Map();
+        tgt.forEach(o => { if (o.dataSet) byKey.set(o.dataSet.id + '|' + norm(o.name), o.id); });
+        let n = 0;
+        for (const [id, obj] of merged.sections) {
+            if (ids.has(id) || !obj.dataSet) continue;
+            const hit = byKey.get(mid(obj.dataSet.id) + '|' + norm(obj.name));
+            if (hit) { map.set(id, hit); n++; }
+        }
+        logTo('zipLog', 'sections: ' + n + ' already in target', n ? 'warning' : 'info');
+    }
+
+    // Org units: code is unique
+    if (ouRaw.length) {
+        const tgt = await targetList(t, 'organisationUnits', 'id,code');
+        const ids = new Set(tgt.map(o => o.id));
+        const byCode = new Map();
+        tgt.forEach(o => { if (o.code) byCode.set(norm(o.code), o.id); });
+        let n = 0;
+        ouRaw.forEach(o => {
+            if (ids.has(o.id)) return;
+            const hit = o.code ? byCode.get(norm(o.code)) : null;
+            if (hit) { map.set(o.id, hit); n++; }
+        });
+        logTo('zipLog', 'organisationUnits: ' + n + ' already in target (matched by code)', n ? 'warning' : 'info');
+    }
+    return map;
+}
+
+async function exportImportZip() {
+    if (!cfg) { notify('Not connected', 'error'); return; }
+    if (typeof JSZip === 'undefined') { notify('ZIP library failed to load, check internet', 'error'); return; }
+    if (!selDs.size && !allOrgUnits.length) { notify('Select datasets (Step 1) or fetch org units (Step 4) first', 'error'); return; }
+
+    const btn = document.getElementById('zipBtn');
+    btn.disabled = true; btn.textContent = 'Building ZIP...';
+    document.getElementById('zipProgressWrap').style.display = 'block';
+    document.getElementById('zipLog').innerHTML = '';
+    setProgress('zipProgress', 0);
+
+    try {
+        // Dataset metadata with dependencies, merged and de-duplicated by UID
+        // Each dependency type is fetched with its owner fields, following the references step by step
+        const merged = {};
+        const dsList = Array.from(selDs.values());
+        if (dsList.length) await collectDatasetMetadata(dsList.map(d => d.uid), merged);
+
+        let ouRaw = allOrgUnits.map(o => o.raw);
+        let uidMap = new Map();
+        const tgt = { url: document.getElementById('tgtUrl').value.trim().replace(/\/$/, ''),
+                      username: document.getElementById('tgtUser').value.trim(),
+                      password: document.getElementById('tgtPass').value };
+        if (tgt.url && tgt.username && tgt.password) {
+            logTo('zipLog', 'Checking what already exists in ' + tgt.url + '...', 'info');
+            uidMap = await buildTargetMap(tgt, merged, ouRaw);
+            // Objects that already exist in the target are dropped, references point to the target UIDs instead
+            Object.keys(merged).forEach(type => { for (const id of Array.from(merged[type].keys())) if (uidMap.has(id)) merged[type].delete(id); });
+            ouRaw = ouRaw.filter(o => !uidMap.has(o.id));
+            logTo('zipLog', uidMap.size + ' objects matched to existing target objects and will be reused.', 'success');
+        } else {
+            logTo('zipLog', 'No target instance given, so name clashes with existing objects are not resolved.', 'warning');
+            // Leave out the built in "default" category objects, the target already has them
+            DEFAULT_TYPES.forEach(type => {
+                if (!merged[type]) return;
+                for (const [id, obj] of merged[type]) {
+                    if ((obj.name || '').toLowerCase() === 'default') merged[type].delete(id);
+                }
+            });
+        }
+        // Keep only org unit assignments that will exist in the target, otherwise the dataset import fails
+        const okOu = new Set(allOrgUnits.map(o => o.uid));
+        if (tgt.url && tgt.username && tgt.password) {
+            (await targetList(tgt, 'organisationUnits', 'id')).forEach(o => okOu.add(o.id));
+        }
+        ['dataSets', 'categoryOptions'].forEach(type => {
+            if (!merged[type]) return;
+            merged[type].forEach(obj => {
+                if (!Array.isArray(obj.organisationUnits)) return;
+                const before = obj.organisationUnits.length;
+                obj.organisationUnits = obj.organisationUnits.filter(o => o && okOu.has(o.id));
+                const dropped = before - obj.organisationUnits.length;
+                if (dropped) logTo('zipLog', (obj.name || obj.id) + ': ' + dropped + ' org unit assignments removed (not in target or in this export), ' + obj.organisationUnits.length + ' kept', 'warning');
+            });
+        });
+        const remapRe = uidMap.size ? new RegExp('\\b(' + Array.from(uidMap.keys()).join('|') + ')\\b', 'g') : null;
+        const toJson = payload => { const t = JSON.stringify(payload, null, 2); return remapRe ? t.replace(remapRe, m => uidMap.get(m)) : t; };
+
+        const zip = new JSZip();
+        const files = [];   // [fileName, payload, summary]
+        let n = 0;
+        const num = () => String(++n).padStart(2, '0');
+
+        // Org units first, one file per level so parents always exist before children
+        if (allOrgUnits.length) {
+            const keep = new Set(ouRaw.map(o => o.id));
+            const levels = Array.from(new Set(allOrgUnits.map(o => o.level))).sort((a,b) => a - b);
+            levels.forEach(lv => {
+                const ous = allOrgUnits.filter(o => o.level === lv && keep.has(o.uid)).map(o => o.raw);
+                if (!ous.length) return;
+                files.push([num() + '_organisationUnits_L' + lv + '_' + levelName(lv).replace(/[^A-Za-z0-9]+/g, '_') + '.json',
+                    { organisationUnits: ous }, 'organisationUnits level ' + lv + ' (' + levelName(lv) + '): ' + ous.length]);
+            });
+            const lvObjs = allLevels.filter(l => levels.includes(l.level)).map(l => ({ id: l.uid, name: l.name, level: l.level }));
+            files.push([num() + '_organisationUnitLevels.json', { organisationUnitLevels: lvObjs }, 'organisationUnitLevels: ' + lvObjs.length]);
+        }
+
+        // Dataset dependencies in import order
+        const used = new Set();
+        IMPORT_ORDER.forEach(group => {
+            const payload = {};
+            let count = 0;
+            group.forEach(type => {
+                used.add(type);
+                if (merged[type] && merged[type].size) { payload[type] = Array.from(merged[type].values()); count += merged[type].size; }
+            });
+            if (count) files.push([num() + '_' + group.join('_') + '.json', payload,
+                group.map(t => t + ': ' + (payload[t] ? payload[t].length : 0)).join(', ')]);
+        });
+        // Anything else the server returned goes last
+        Object.keys(merged).filter(t => !used.has(t) && merged[t].size).sort().forEach(type => {
+            files.push([num() + '_' + type + '.json', { [type]: Array.from(merged[type].values()) }, type + ': ' + merged[type].size]);
+        });
+
+        if (!files.length) throw new Error('Nothing to export');
+
+        files.forEach(f => { zip.file(f[0], toJson(f[1])); logTo('zipLog', f[0] + '  (' + f[2] + ')', 'success'); });
+
+        setProgress('zipProgress', 90);
+        const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'dhis2-metadata-import-' + new Date().toISOString().split('T')[0] + '.zip';
+        a.click();
+        setProgress('zipProgress', 100);
+        logTo('zipLog', 'ZIP ready with ' + files.length + ' JSON files. Import them in number order.', 'success');
+        notify('Import ZIP downloaded (' + files.length + ' files)', 'success');
+    } catch(e) {
+        logTo('zipLog', 'ERROR: ' + e.message, 'error');
+        notify('ZIP failed: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false; btn.textContent = '⬇ Download Import ZIP (JSON by type)';
+    }
 }
 </script>
 </body>
